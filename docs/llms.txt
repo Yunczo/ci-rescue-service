@@ -1,0 +1,34 @@
+# CI Rescue
+
+> Fixed-scope GitHub Actions diagnosis and repair with public proof artifacts.
+
+Canonical site: https://yunczo.github.io/ci-rescue-service/
+Repository: https://github.com/Yunczo/ci-rescue-service
+Public intake: https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml
+
+## Service
+
+- Price: US$49 equivalent in Bitcoin, quoted in writing before payment.
+- Scope: one GitHub Actions workflow and one failing job path.
+- Response: normally within 24 hours.
+- Delivery: within 48 hours after confirmed payment and sanitized inputs.
+- Deliverable: focused diagnosis, reviewable patch or unified diff, verification report, and one in-scope revision.
+- Excluded: security or vulnerability work, credentials, production access, private data in public issues, and full CI/CD redesigns.
+
+## Public proof
+
+- Runnable proof workflow: https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml
+- Free MIT-licensed toolkit: https://github.com/Yunczo/ci-rescue-service/releases/tag/toolkit-v1.0.0
+- Release verification: https://github.com/Yunczo/ci-rescue-service/blob/main/RELEASE_VERIFICATION.md
+- Synthetic example: https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md
+
+The examples are synthetic and are not represented as paid-client results.
+
+## Free guides
+
+- npm ci lockfile errors: https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html
+- package-lock lookup in monorepos: https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html
+
+## Payment boundaries
+
+Service buyers must not pay before an intake reply confirms scope, exact BTC amount, address, quote expiry, and delivery window. Voluntary toolkit support is separate from the service and creates no delivery or priority obligation.
