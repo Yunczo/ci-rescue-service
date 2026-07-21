@@ -6,6 +6,7 @@ Verified on 2026-07-21. This is a reproducible QA record for the offline analyze
 
 - File: `CI_Rescue_Kit_v1.0.0.zip`
 - SHA-256: `cf8f513c66b2951c5358f73f17ca759e9ee7471695c9406fab2f25960709c369`
+- Public build: [download the exact release archive](https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip)
 - Archive integrity: `unzip -t` passed with no errors
 - Cache/build artifacts: none found in the archive
 
@@ -32,4 +33,4 @@ Verified on 2026-07-21. This is a reproducible QA record for the offline analyze
 
 ## Verification boundary
 
-These results describe local automated checks of release 1.0.0. They do not prove that a buyer's hosted workflow, dependencies, credentials, or third-party services will pass.
+The repository's [public proof workflow](https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml) downloads this exact archive, verifies its checksum, runs all included tests, and checks the corrected example. These results do not prove that a buyer's hosted workflow, dependencies, credentials, or third-party services will pass.

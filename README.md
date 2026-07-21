@@ -1,5 +1,7 @@
 # CI Rescue — focused GitHub Actions repair
 
+[![Public proof](https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml/badge.svg)](https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml)
+
 One failing GitHub Actions workflow, one focused diagnosis, and one reviewable patch.
 
 ## Fixed-scope offer
@@ -43,6 +45,7 @@ Before sending, the buyer must post the intended amount in the accepted intake i
 - [Actual analyzer output for that synthetic example](examples/sample-report.md)
 - [Exact broken workflow](examples/broken-workflow.yml) and [corrected workflow](examples/fixed-workflow.yml)
 - [Release verification record](RELEASE_VERIFICATION.md)
+- [Download the free MIT-licensed offline toolkit](https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip) used for these synthetic proof artifacts
 - The underlying release passed 38 automated tests, a 5,000-input fuzz smoke, a clean offline install, and a large-workflow performance check.
 
 These examples contain no client data and are not represented as paid-client results.

@@ -1,0 +1,41 @@
+name: Public proof
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/public-proof.yml"
+      - "RELEASE_VERIFICATION.md"
+      - "examples/**"
+  pull_request:
+    paths:
+      - ".github/workflows/public-proof.yml"
+      - "RELEASE_VERIFICATION.md"
+      - "examples/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download the published toolkit
+        run: |
+          curl --fail --location --silent --show-error \
+            --output CI_Rescue_Kit_v1.0.0.zip \
+            https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip
+      - name: Verify the published checksum
+        run: echo "cf8f513c66b2951c5358f73f17ca759e9ee7471695c9406fab2f25960709c369  CI_Rescue_Kit_v1.0.0.zip" | sha256sum --check
+      - name: Extract and run all tests
+        run: |
+          unzip -q CI_Rescue_Kit_v1.0.0.zip
+          cd ci-rescue-kit
+          python3 -m unittest discover -s tests -v
+      - name: Verify the corrected example
+        run: |
+          cd ci-rescue-kit
+          python3 -m ci_rescue workflow examples/fixed-workflow.yml --fail-on warning
