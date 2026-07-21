@@ -50,6 +50,11 @@ Before sending, the buyer must post the intended amount in the accepted intake i
 
 These examples contain no client data and are not represented as paid-client results.
 
+## Free troubleshooting guides
+
+- [Fix `npm ci` lockfile errors in GitHub Actions](https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html)
+- [Fix `package-lock.json` lookup in a monorepo workflow](https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html)
+
 ## Support the free toolkit
 
 If the free toolkit saved you time, optional Bitcoin support is welcome at `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`. Voluntary support is not a service purchase, does not create a delivery obligation or priority, and is separate from CI Rescue intake. See [the support boundary](SUPPORT.md).
