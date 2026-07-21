@@ -10,6 +10,14 @@
   <meta property="og:description" content="One failing workflow. One focused diagnosis. One reviewable patch.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/">
+  <meta property="og:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="CI Rescue Kit — offline GitHub Actions diagnostics">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="CI Rescue — GitHub Actions repair for $49">
+  <meta name="twitter:description" content="One failing workflow. One focused diagnosis. One reviewable patch.">
+  <meta name="twitter:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
   <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/">
   <script type="application/ld+json">
   {
@@ -97,6 +105,31 @@
     .proof-links { display: flex; flex-wrap: wrap; gap: .7rem; }
     .proof-links a { padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .45rem; text-decoration: none; }
 
+    .intake { display: grid; grid-template-columns: 1.15fr .85fr; gap: 1rem; align-items: start; }
+    .intake-panel { padding: 1.5rem; border: 1px solid var(--line); border-radius: .8rem; background: var(--panel); }
+    .intake-panel h3 { margin-top: 0; }
+    .intake-panel p { color: var(--muted); }
+    .intake-form { display: grid; gap: 1rem; }
+    .intake-form label { display: grid; gap: .45rem; color: #d4d2ca; font-size: .9rem; }
+    .intake-form input, .intake-form textarea {
+      width: 100%; padding: .8rem .9rem; border: 1px solid var(--line); border-radius: .45rem;
+      background: rgba(0, 0, 0, .24); color: var(--ink); font: inherit;
+    }
+    .intake-form textarea { min-height: 9rem; resize: vertical; }
+    .intake-form input:focus, .intake-form textarea:focus { outline: 2px solid var(--green); outline-offset: 1px; }
+    .intake-form .check { display: flex; grid-template-columns: none; gap: .7rem; align-items: flex-start; }
+    .intake-form .check input { width: auto; margin-top: .35rem; }
+    .intake-form button, .refresh {
+      padding: .8rem 1rem; border: 0; border-radius: .45rem; background: var(--green); color: #07130c;
+      font-family: inherit; font-size: .9rem; font-weight: 800; line-height: 1.2; cursor: pointer;
+    }
+    .intake-form button:disabled, .refresh:disabled { cursor: wait; opacity: .65; }
+    .ticket { display: block; overflow-wrap: anywhere; margin: .8rem 0 1.2rem; color: var(--green); font-size: .78rem; }
+    .intake-status { min-height: 3.2rem; padding: .8rem; border-left: 3px solid var(--line); background: rgba(0, 0, 0, .18); color: var(--muted); }
+    .intake-status[data-state="success"] { border-color: var(--green); color: #c9ded1; }
+    .intake-status[data-state="error"] { border-color: var(--amber); color: #f3d6a7; }
+    .intake-response { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid rgba(117, 230, 165, .25); border-radius: .45rem; background: rgba(0, 0, 0, .22); color: #dcece2; }
+
     .payment { padding: 2rem; border: 1px solid rgba(117, 230, 165, .3); background: var(--green-dark); border-radius: 1rem; }
     .payment p { color: #c9ded1; }
     .address { display: block; overflow-wrap: anywhere; margin: 1.25rem 0; padding: 1rem; border: 1px solid rgba(117, 230, 165, .22); border-radius: .55rem; background: rgba(0,0,0,.22); color: var(--green); }
@@ -107,7 +140,7 @@
     footer { padding: 2rem 0 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
 
     @media (max-width: 760px) {
-      .hero, .proof { grid-template-columns: 1fr; }
+      .hero, .proof, .intake { grid-template-columns: 1fr; }
       .cards { grid-template-columns: 1fr; }
       .fit { grid-template-columns: 1fr; }
       .strip { grid-template-columns: 1fr; }
@@ -134,7 +167,8 @@
       <aside class="price" aria-label="Offer summary">
         <strong>$49</strong>
         <span>USD equivalent in Bitcoin · scope reply within 24h</span>
-        <a class="cta" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Request a rescue →</a>
+        <a class="cta" href="#anonymous-intake">Request a rescue →</a>
+        <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Or use GitHub intake</a>
       </aside>
     </div>
 
@@ -147,8 +181,8 @@
     <section class="wrap" aria-labelledby="process-title">
       <h2 id="process-title">A deliberately small engagement.</h2>
       <div class="cards">
-        <article class="card"><em>01</em><h3>Post sanitized evidence</h3><p>Use the public intake form with the smallest relevant workflow and log excerpts. Remove every secret and private identifier.</p></article>
-        <article class="card"><em>02</em><h3>Scope is confirmed first</h3><p>The exact deliverable, BTC amount, address, and delivery window are written in the issue before payment is requested.</p></article>
+        <article class="card"><em>01</em><h3>Send sanitized evidence</h3><p>Use the encrypted, no-account inbox below or a public GitHub issue. Include only the smallest relevant workflow and log excerpts.</p></article>
+        <article class="card"><em>02</em><h3>Scope is confirmed first</h3><p>The exact deliverable, BTC amount, address, and delivery window are confirmed in a signed reply before payment is requested.</p></article>
         <article class="card"><em>03</em><h3>Receive a reviewable fix</h3><p>Get a focused patch or unified diff, the first actionable root cause, and a compact verification report.</p></article>
       </div>
     </section>
@@ -187,6 +221,7 @@
           <a href="#toolkit-support">Support the toolkit</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md">Before / after</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/sample-report.md">Sample report</a>
+          <a href="https://github.com/Yunczo/ci-rescue-service/actions/runs/29867610488">Passing proof workflow</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/RELEASE_VERIFICATION.md">QA record</a>
           <a href="https://github.com/Yunczo/ci-rescue-service">Repository &amp; terms</a>
         </div>
@@ -199,6 +234,45 @@
       <div class="proof-links">
         <a href="guides/npm-ci-lockfile-github-actions.html">Fix npm ci lockfile errors →</a>
         <a href="guides/package-lock-monorepo-github-actions.html">Find package-lock in a monorepo →</a>
+      </div>
+    </section>
+
+    <section class="wrap" id="anonymous-intake" aria-labelledby="intake-title">
+      <div class="eyebrow">No login or email</div>
+      <h2 id="intake-title">Open an anonymous reply inbox.</h2>
+      <div class="intake">
+        <div class="intake-panel">
+          <h3>Send a sanitized request</h3>
+          <p>This page creates a random ticket key in your browser and encrypts the request to the CI Rescue service key before publishing it through independent Nostr relays. Relay metadata is public; do not send secrets, private source, credentials, or personal data.</p>
+          <form class="intake-form" id="anonymous-intake-form">
+            <label>
+              Failure summary
+              <input name="summary" required maxlength="180" placeholder="Example: npm ci cannot find the monorepo lockfile">
+            </label>
+            <label>
+              Public repository or run URL (optional)
+              <input name="publicUrl" type="url" maxlength="500" placeholder="https://github.com/owner/repo/actions/runs/…">
+            </label>
+            <label>
+              Minimal sanitized evidence
+              <textarea name="details" required maxlength="3000" placeholder="Workflow path, failing step, exact redacted error, expected result, and runtime versions"></textarea>
+            </label>
+            <label class="check">
+              <input type="checkbox" name="sanitized" required>
+              <span>I removed secrets, tokens, private URLs, personal data, proprietary source, and production details.</span>
+            </label>
+            <button type="submit">Encrypt and send request</button>
+          </form>
+        </div>
+        <aside class="intake-panel" aria-label="Anonymous ticket inbox">
+          <h3>Your browser-local ticket</h3>
+          <p>Keep this browser's site data until the work is finished. Clearing it loses access to replies. The ticket key never leaves this page.</p>
+          <code class="ticket" id="anonymous-ticket-id">Generating ticket…</code>
+          <div class="intake-status" id="anonymous-intake-status" role="status" aria-live="polite">Ready to send a request.</div>
+          <pre class="intake-response" id="anonymous-intake-response" hidden></pre>
+          <button class="refresh" id="anonymous-intake-refresh" type="button">Check for signed reply</button>
+          <p class="fine">Alternative: <a href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">use the public GitHub intake</a>. Inspect the <a href="https://njump.me/nevent1qgsr2qusutwukng55zqzelmvrnj8s6y8r4n3nnlkt48vl8k2r0p8dgcpz3mhxue69uhhyetvv9ujuerpd46hxtnfduqs6amnwvaz7tmwdaejumr0dsq3vamnwvaz7tmjv4kxz7fwwpexjmtpdshxuet5qqsdgaupfaty0x4kwsec58fgp24e8twq65jwtztejgatgnqe3tuhllqmrux48">public service identity</a>.</p>
+        </aside>
       </div>
     </section>
 
@@ -217,7 +291,7 @@
       <div class="payment">
         <div class="eyebrow">Payment boundary</div>
         <h2 id="payment-title">Do not pay before written acceptance.</h2>
-        <p>Bitcoin is irreversible. Payment is requested only after the public intake issue confirms that the request fits, the exact BTC amount, this address, and the delivery window.</p>
+        <p>Bitcoin is irreversible. Payment is requested only after a signed anonymous-inbox reply or public GitHub intake reply confirms that the request fits, the exact BTC amount, this address, and the delivery window.</p>
         <code class="address">1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre</code>
         <a class="secondary" href="bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Service&amp;message=One%20workflow%20repair">Open wallet request</a>
         <a class="secondary" href="https://mempool.space/address/1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre">Verify receipts</a>
@@ -228,7 +302,8 @@
   </main>
 
   <footer>
-    <div class="wrap">CI Rescue by Yunczo · Fixed scope · Public intake · No credential sharing</div>
+    <div class="wrap">CI Rescue by Yunczo · Fixed scope · No-account or GitHub intake · No credential sharing</div>
   </footer>
+  <script src="assets/nostr-intake.js" defer></script>
 </body>
 </html>

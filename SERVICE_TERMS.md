@@ -2,7 +2,7 @@
 
 ## Scope confirmation
 
-No payment is requested until the public intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. A scope response is normally posted within 24 hours. An acceptance reply must state the accepted USD price, the exact BTC amount, the payment address, the quote expiry, and the delivery window. The BTC quote expires after 24 hours unless the acceptance reply states otherwise.
+No payment is requested until either the no-account anonymous inbox or a public GitHub intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. A scope response is normally posted within 24 hours. An acceptance reply must state the accepted USD price, the exact BTC amount, the payment address, the quote expiry, and the delivery window. The BTC quote expires after 24 hours unless the acceptance reply states otherwise.
 
 ## Delivery
 
@@ -21,13 +21,15 @@ The included revision must be requested within seven calendar days of delivery a
 ## Buyer safety
 
 - GitHub issues in this repository are public.
+- The no-account route encrypts message content with NIP-17, but public relays can observe transport metadata and availability is not guaranteed.
+- The anonymous ticket key exists only in the buyer's browser storage; clearing it loses access to replies.
 - Do not post secrets, tokens, private repository URLs, personal data, production logs, or proprietary source.
 - Replace sensitive values and provide the smallest reproducible excerpt.
 - No production, cloud-account, or credential access is requested or accepted.
 
 ## Payment and refunds
 
-Bitcoin is irreversible. The buyer must not pay until the intake issue explicitly confirms scope and the BTC amount. If the accepted work cannot be delivered for a reason attributable to the service provider, a refund can be sent to a buyer-provided Bitcoin address, less the network fee actually required for that refund transaction. Scope changes after payment require a new written agreement; they are not silently added.
+Bitcoin is irreversible. The buyer must not pay until a signed anonymous-inbox reply or public GitHub reply explicitly confirms scope and the BTC amount. If the accepted work cannot be delivered for a reason attributable to the service provider, a refund can be sent to a buyer-provided Bitcoin address, less the network fee actually required for that refund transaction. Scope changes after payment require a new written agreement; they are not silently added.
 
 ## Boundaries
 

@@ -10,7 +10,9 @@ One failing GitHub Actions workflow, one focused diagnosis, and one reviewable p
 
 The service covers one workflow and one failing job path. I review the workflow plus the smallest relevant sanitized log excerpt, identify the first actionable cause, produce an in-scope patch, and return a concise delivery report with verification evidence.
 
-[Open a service-request issue](../../issues/new?template=service-request.yml) to confirm scope before paying. GitHub issues are public: remove secrets, tokens, private URLs, personal data, and proprietary source. A redacted minimal reproduction is preferred.
+[Open the no-account encrypted intake](https://yunczo.github.io/ci-rescue-service/#anonymous-intake) or [use a public service-request issue](../../issues/new?template=service-request.yml) to confirm scope before paying. In either channel, remove secrets, tokens, private URLs, personal data, proprietary source, and production details. A redacted minimal reproduction is preferred.
+
+The no-account route creates a random ticket key in the buyer's browser and uses NIP-17 gift-wrapped messages over independent Nostr relays. The message payload is encrypted, but relay metadata is observable and browser storage is the only copy of the buyer's ticket key. See the [anonymous intake boundary](ANONYMOUS_INTAKE.md).
 
 ## Included
 
@@ -31,13 +33,13 @@ The service covers one workflow and one failing job path. I review the workflow 
 
 ## Payment
 
-Payment is requested only after the public intake issue has been reviewed and the scope has been accepted.
+Payment is requested only after an intake request has been reviewed and the scope has been accepted in either a signed anonymous-inbox reply or a public GitHub issue reply.
 
 - Bitcoin mainnet: `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`
 - Wallet URI to copy into a compatible wallet: `bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Service&message=One%20workflow%20repair`
 - [Verify receipts independently](https://mempool.space/address/1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre)
 
-Before sending, the buyer must post the intended amount in the accepted intake issue. After broadcasting, post the transaction ID there so the receipt can be verified. Bitcoin payments are irreversible. Do not send funds until scope and the exact BTC amount are confirmed in that issue.
+Before sending, the buyer must confirm the intended amount in the accepted intake channel. After broadcasting, send the transaction ID in the same channel so the receipt can be verified. Bitcoin payments are irreversible. Do not send funds until scope and the exact BTC amount are confirmed in a reply signed by the service key or posted by `Yunczo` in this repository.
 
 ## Proof, not invented client claims
 

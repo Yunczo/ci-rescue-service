@@ -4,7 +4,8 @@
 
 Canonical site: https://yunczo.github.io/ci-rescue-service/
 Repository: https://github.com/Yunczo/ci-rescue-service
-Public intake: https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml
+No-account encrypted intake: https://yunczo.github.io/ci-rescue-service/#anonymous-intake
+Public GitHub intake: https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml
 
 ## Service
 
@@ -14,6 +15,7 @@ Public intake: https://github.com/Yunczo/ci-rescue-service/issues/new?template=s
 - Delivery: within 48 hours after confirmed payment and sanitized inputs.
 - Deliverable: focused diagnosis, reviewable patch or unified diff, verification report, and one in-scope revision.
 - Excluded: security or vulnerability work, credentials, production access, private data in public issues, and full CI/CD redesigns.
+- Intake: browser-local NIP-17 ticket or public GitHub issue; never send secrets or private data.
 
 ## Public proof
 

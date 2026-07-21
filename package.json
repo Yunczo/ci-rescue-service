@@ -1,0 +1,14 @@
+{
+  "name": "ci-rescue-service-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:intake": "esbuild src/nostr-intake.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/nostr-intake.js"
+  },
+  "dependencies": {
+    "nostr-tools": "2.24.1"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.8"
+  }
+}
