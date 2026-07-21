@@ -4,7 +4,7 @@ One failing GitHub Actions workflow, one focused diagnosis, and one reviewable p
 
 ## Fixed-scope offer
 
-**US$49 equivalent in Bitcoin · delivery within 2 days · one revision**
+**US$49 equivalent in Bitcoin · scope response within 24 hours · delivery within 2 days · one revision**
 
 The service covers one workflow and one failing job path. I review the workflow plus the smallest relevant sanitized log excerpt, identify the first actionable cause, produce an in-scope patch, and return a concise delivery report with verification evidence.
 
@@ -32,15 +32,17 @@ The service covers one workflow and one failing job path. I review the workflow 
 Payment is requested only after the public intake issue has been reviewed and the scope has been accepted.
 
 - Bitcoin mainnet: `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`
-- [Open a wallet payment request](bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Service&message=One%20workflow%20repair)
+- Wallet URI to copy into a compatible wallet: `bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Service&message=One%20workflow%20repair`
 - [Verify receipts independently](https://mempool.space/address/1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre)
 
-Before sending, the buyer must post the intended amount and transaction ID in the accepted intake issue. Bitcoin payments are irreversible. Do not send funds until scope and the BTC amount are confirmed in that issue.
+Before sending, the buyer must post the intended amount in the accepted intake issue. After broadcasting, post the transaction ID there so the receipt can be verified. Bitcoin payments are irreversible. Do not send funds until scope and the exact BTC amount are confirmed in that issue.
 
 ## Proof, not invented client claims
 
 - [Synthetic before/after example](examples/before-after.md)
 - [Actual analyzer output for that synthetic example](examples/sample-report.md)
+- [Exact broken workflow](examples/broken-workflow.yml) and [corrected workflow](examples/fixed-workflow.yml)
+- [Release verification record](RELEASE_VERIFICATION.md)
 - The underlying release passed 38 automated tests, a 5,000-input fuzz smoke, a clean offline install, and a large-workflow performance check.
 
 These examples contain no client data and are not represented as paid-client results.

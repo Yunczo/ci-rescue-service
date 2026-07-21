@@ -2,7 +2,7 @@
 
 ## Scope confirmation
 
-No payment is requested until the public intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. An intake reply must state the accepted USD price, the exact BTC amount, the payment address, and the delivery window.
+No payment is requested until the public intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. A scope response is normally posted within 24 hours. An acceptance reply must state the accepted USD price, the exact BTC amount, the payment address, the quote expiry, and the delivery window. The BTC quote expires after 24 hours unless the acceptance reply states otherwise.
 
 ## Delivery
 
@@ -14,7 +14,9 @@ The US$49 Rescue package includes:
 - a short root-cause and verification report; and
 - one revision addressing the originally accepted failure.
 
-The default delivery window is two days from confirmed payment and receipt of the required sanitized inputs.
+The default delivery window is 48 hours from confirmed payment and receipt of the required sanitized inputs.
+
+The included revision must be requested within seven calendar days of delivery and must address the originally accepted failure. New workflows, failure paths, or requirements are a new scope.
 
 ## Buyer safety
 

@@ -7,7 +7,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        This issue is public. Remove secrets, tokens, private URLs, personal data, and proprietary source. Do not send Bitcoin until a reply explicitly accepts the scope and confirms the exact BTC amount.
+        This issue is public. Remove secrets, tokens, private URLs, personal data, and proprietary source. A scope response is normally posted within 24 hours. Do not send Bitcoin until a reply explicitly accepts the scope and confirms the exact BTC amount, address, quote expiry, and delivery window.
   - type: dropdown
     id: failure_area
     attributes:

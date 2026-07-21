@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CI Rescue — GitHub Actions repair for $49</title>
+  <meta name="description" content="A fixed-scope diagnosis and reviewable patch for one failing GitHub Actions workflow. $49, two-day delivery, one revision.">
+  <meta name="robots" content="index,follow">
+  <meta property="og:title" content="CI Rescue — GitHub Actions repair for $49">
+  <meta property="og:description" content="One failing workflow. One focused diagnosis. One reviewable patch.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": "CI Rescue",
+    "description": "Fixed-scope diagnosis and repair for one failing GitHub Actions workflow.",
+    "provider": {"@type": "Person", "name": "Yunczo"},
+    "areaServed": "Worldwide",
+    "offers": {
+      "@type": "Offer",
+      "price": "49",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    }
+  }
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --ink: #f7f4ea;
+      --muted: #aaa9a2;
+      --panel: rgba(24, 27, 31, 0.84);
+      --line: rgba(255, 255, 255, 0.12);
+      --green: #75e6a5;
+      --green-dark: #102d20;
+      --amber: #ffc56e;
+      --bg: #0d0f11;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(40, 129, 84, 0.23), transparent 30rem),
+        radial-gradient(circle at 88% 18%, rgba(164, 107, 32, 0.16), transparent 27rem),
+        var(--bg);
+      font: 16px/1.6 ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    a { color: inherit; }
+    .wrap { width: min(1060px, calc(100% - 2rem)); margin: 0 auto; }
+    header { padding: 1.2rem 0; border-bottom: 1px solid var(--line); }
+    nav { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+    .brand { font-weight: 800; letter-spacing: -0.03em; text-decoration: none; }
+    .status { display: inline-flex; align-items: center; gap: .55rem; color: var(--muted); font-size: .86rem; }
+    .status::before { content: ""; width: .55rem; height: .55rem; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 .22rem rgba(117, 230, 165, .12); }
+
+    .hero { padding: clamp(4.5rem, 11vw, 8.5rem) 0 4rem; display: grid; grid-template-columns: 1.35fr .65fr; gap: 3rem; align-items: end; }
+    .eyebrow { color: var(--green); font-size: .82rem; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { max-width: 800px; margin: .8rem 0 1.25rem; font-size: clamp(2.8rem, 7vw, 6.2rem); line-height: .98; letter-spacing: -.07em; }
+    .lede { max-width: 680px; color: #d4d2ca; font: clamp(1.08rem, 2vw, 1.35rem)/1.6 system-ui, sans-serif; }
+    .price { padding: 1.6rem; border: 1px solid var(--line); background: var(--panel); border-radius: 1rem; }
+    .price strong { display: block; font-size: 2.5rem; line-height: 1.1; letter-spacing: -.05em; }
+    .price span { color: var(--muted); font-size: .88rem; }
+    .cta { display: inline-flex; justify-content: center; margin-top: 1.3rem; width: 100%; padding: .9rem 1.1rem; border-radius: .55rem; background: var(--green); color: #07130c; font-weight: 800; text-decoration: none; transition: transform .15s ease, background .15s ease; }
+    .cta:hover { transform: translateY(-2px); background: #9af0bd; }
+
+    .strip { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
+    .strip div { padding: 1.25rem 0; color: var(--muted); }
+    .strip div + div { padding-left: 1.25rem; border-left: 1px solid var(--line); }
+    .strip b { display: block; color: var(--ink); font-size: .92rem; }
+
+    section { padding: 4.5rem 0; }
+    h2 { margin: 0 0 1.8rem; font-size: clamp(1.8rem, 4vw, 3rem); line-height: 1.1; letter-spacing: -.05em; }
+    .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; }
+    .card { min-height: 12rem; padding: 1.45rem; border: 1px solid var(--line); border-radius: .8rem; background: var(--panel); }
+    .card em { display: block; margin-bottom: 2.1rem; color: var(--green); font-style: normal; }
+    .card h3 { margin: 0 0 .55rem; font-size: 1rem; }
+    .card p { margin: 0; color: var(--muted); font-size: .9rem; }
+
+    .fit { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .fit article { padding: 1.5rem; border: 1px solid var(--line); border-radius: .8rem; }
+    .fit h3 { margin-top: 0; }
+    ul { padding-left: 1.1rem; color: var(--muted); }
+    li + li { margin-top: .45rem; }
+    .not-fit h3 { color: var(--amber); }
+
+    .proof { display: grid; grid-template-columns: .8fr 1.2fr; gap: 2rem; align-items: start; }
+    .proof-box { padding: 1.35rem; border: 1px solid var(--line); border-radius: .8rem; background: #111419; }
+    .proof-box code { color: var(--green); }
+    .proof-box p { color: var(--muted); }
+    .proof-links { display: flex; flex-wrap: wrap; gap: .7rem; }
+    .proof-links a { padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .45rem; text-decoration: none; }
+
+    .payment { padding: 2rem; border: 1px solid rgba(117, 230, 165, .3); background: var(--green-dark); border-radius: 1rem; }
+    .payment p { color: #c9ded1; }
+    .address { display: block; overflow-wrap: anywhere; margin: 1.25rem 0; padding: 1rem; border: 1px solid rgba(117, 230, 165, .22); border-radius: .55rem; background: rgba(0,0,0,.22); color: var(--green); }
+    .secondary { display: inline-block; margin: .45rem .85rem .25rem 0; color: var(--green); }
+    .fine { color: var(--muted); font-size: .82rem; }
+    footer { padding: 2rem 0 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+
+    @media (max-width: 760px) {
+      .hero, .proof { grid-template-columns: 1fr; }
+      .cards { grid-template-columns: 1fr; }
+      .fit { grid-template-columns: 1fr; }
+      .strip { grid-template-columns: 1fr; }
+      .strip div + div { padding-left: 0; border-left: 0; }
+      h1 { letter-spacing: -.055em; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav class="wrap" aria-label="Main navigation">
+      <a class="brand" href="#top">CI RESCUE</a>
+      <span class="status">Accepting one-workflow requests</span>
+    </nav>
+  </header>
+
+  <main id="top">
+    <div class="wrap hero">
+      <div>
+        <div class="eyebrow">GitHub Actions diagnosis + patch</div>
+        <h1>Get one failing workflow unstuck.</h1>
+        <p class="lede">A focused root-cause diagnosis, a reviewable patch, and verification evidence—without handing over credentials or production access.</p>
+      </div>
+      <aside class="price" aria-label="Offer summary">
+        <strong>$49</strong>
+        <span>USD equivalent in Bitcoin · scope reply within 24h</span>
+        <a class="cta" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Request a rescue →</a>
+      </aside>
+    </div>
+
+    <div class="wrap strip" aria-label="Service details">
+      <div><b>1 workflow</b>One failing job path</div>
+      <div><b>2 days</b>After confirmed payment and inputs</div>
+      <div><b>1 revision</b>Within the accepted scope</div>
+    </div>
+
+    <section class="wrap" aria-labelledby="process-title">
+      <h2 id="process-title">A deliberately small engagement.</h2>
+      <div class="cards">
+        <article class="card"><em>01</em><h3>Post sanitized evidence</h3><p>Use the public intake form with the smallest relevant workflow and log excerpts. Remove every secret and private identifier.</p></article>
+        <article class="card"><em>02</em><h3>Scope is confirmed first</h3><p>The exact deliverable, BTC amount, address, and delivery window are written in the issue before payment is requested.</p></article>
+        <article class="card"><em>03</em><h3>Receive a reviewable fix</h3><p>Get a focused patch or unified diff, the first actionable root cause, and a compact verification report.</p></article>
+      </div>
+    </section>
+
+    <section class="wrap fit" aria-label="Scope">
+      <article>
+        <h3>Good fit</h3>
+        <ul>
+          <li>Workflow YAML or job configuration</li>
+          <li>Dependency installation and lockfiles</li>
+          <li>Test discovery and command paths</li>
+          <li>Cache, artifact, timeout, or action-reference failures</li>
+        </ul>
+      </article>
+      <article class="not-fit">
+        <h3>Not accepted</h3>
+        <ul>
+          <li>Security, vulnerability, credential, or access-control review</li>
+          <li>Production or cloud-account access</li>
+          <li>Secrets, private logs, or proprietary source in public issues</li>
+          <li>Multi-repository migrations or full CI/CD redesigns</li>
+        </ul>
+      </article>
+    </section>
+
+    <section class="wrap proof" aria-labelledby="proof-title">
+      <div>
+        <div class="eyebrow">Inspect before buying</div>
+        <h2 id="proof-title">Proof is public.</h2>
+      </div>
+      <div class="proof-box">
+        <code>3 errors → 0 recognized findings</code>
+        <p>The repository includes a synthetic broken-workflow example, its diagnostic report, and the focused patch. It is explicitly a demo—not an invented client result.</p>
+        <div class="proof-links">
+          <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md">Before / after</a>
+          <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/sample-report.md">Sample report</a>
+          <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/RELEASE_VERIFICATION.md">QA record</a>
+          <a href="https://github.com/Yunczo/ci-rescue-service">Repository &amp; terms</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="wrap" aria-labelledby="payment-title">
+      <div class="payment">
+        <div class="eyebrow">Payment boundary</div>
+        <h2 id="payment-title">Do not pay before written acceptance.</h2>
+        <p>Bitcoin is irreversible. Payment is requested only after the public intake issue confirms that the request fits, the exact BTC amount, this address, and the delivery window.</p>
+        <code class="address">1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre</code>
+        <a class="secondary" href="bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Service&amp;message=One%20workflow%20repair">Open wallet request</a>
+        <a class="secondary" href="https://mempool.space/address/1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre">Verify receipts</a>
+        <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service/blob/main/SERVICE_TERMS.md">Read terms</a>
+        <p class="fine">No claim of prior paid-client results is made. A diagnostic finding or local check cannot guarantee third-party hosted services will pass.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">CI Rescue by Yunczo · Fixed scope · Public intake · No credential sharing</div>
+  </footer>
+</body>
+</html>
