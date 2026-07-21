@@ -1,0 +1,62 @@
+name: CI Rescue service request
+description: Request a scoped $49 diagnosis and patch for one failing GitHub Actions workflow.
+title: "[Service request] "
+labels:
+  - service-request
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This issue is public. Remove secrets, tokens, private URLs, personal data, and proprietary source. Do not send Bitcoin until a reply explicitly accepts the scope and confirms the exact BTC amount.
+  - type: dropdown
+    id: failure_area
+    attributes:
+      label: Failure area
+      options:
+        - Workflow structure or job configuration
+        - Dependency install or lockfile
+        - Test discovery or command path
+        - Cache or artifact path
+        - Timeout or action reference
+        - Other non-security CI failure
+    validations:
+      required: true
+  - type: input
+    id: language
+    attributes:
+      label: Language and package manager
+      placeholder: "Example: Node 22 and npm 10"
+    validations:
+      required: true
+  - type: textarea
+    id: minimal_workflow
+    attributes:
+      label: Sanitized workflow excerpt
+      description: Paste only the smallest relevant excerpt, with all secrets and private identifiers removed.
+      render: yaml
+    validations:
+      required: true
+  - type: textarea
+    id: minimal_log
+    attributes:
+      label: Sanitized failing-log excerpt
+      description: Paste the first actionable failure and a few surrounding lines; remove secrets and private data.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: last_passing
+    attributes:
+      label: Last known passing change
+      description: Optional public commit or a short description. Do not link a private repository.
+  - type: checkboxes
+    id: boundaries
+    attributes:
+      label: Safety confirmation
+      options:
+        - label: I removed secrets, tokens, personal data, private URLs, and proprietary source.
+          required: true
+        - label: This is a non-security CI request and requires no production or cloud-account access.
+          required: true
+        - label: I understand that payment is requested only after written scope acceptance in this issue.
+          required: true
