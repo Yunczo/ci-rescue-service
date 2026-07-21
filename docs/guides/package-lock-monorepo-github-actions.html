@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitHub Actions can’t find package-lock.json in a monorepo | CI Rescue</title>
+  <meta name="description" content="Fix setup-node cache failures when package-lock.json lives in a monorepo subdirectory. Set cache-dependency-path and npm working-directory separately.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html">
+  <meta property="og:title" content="GitHub Actions can’t find package-lock.json in a monorepo">
+  <meta property="og:description" content="Point setup-node and npm at the same package without confusing cache lookup with command execution.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html">
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; --amber:#ffc56e; }
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),var(--bg);color:var(--ink);font:17px/1.72 system-ui,-apple-system,sans-serif} a{color:var(--green)} code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace} header{border-bottom:1px solid var(--line)} nav,main,footer{width:min(840px,calc(100% - 2rem));margin:auto} nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;font:700 .86rem ui-monospace,monospace} nav a{color:var(--ink);text-decoration:none} main{padding:clamp(3.5rem,9vw,7rem) 0 5rem}.eyebrow{color:var(--green);font:700 .78rem ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}h1{max-width:800px;margin:.8rem 0 1.2rem;font:800 clamp(2.4rem,7vw,5rem)/1.02 ui-monospace,monospace;letter-spacing:-.065em}h2{margin:3.5rem 0 1rem;font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace;letter-spacing:-.04em}.lede{max-width:760px;color:#d4d2ca;font-size:1.18rem}.summary,.boundary{margin:2rem 0;padding:1.25rem 1.4rem;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:.4rem;background:var(--panel)}.summary p,.boundary p{margin:.3rem 0}pre{overflow:auto;padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:#111419;color:#d9f7e5;font-size:.88rem;line-height:1.55}li+li{margin-top:.55rem}.dont,.sources{color:var(--muted)}.sources{font-size:.9rem}.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.split article{padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:var(--panel)}.split h3{margin-top:0;font-family:ui-monospace,monospace}.cta{margin-top:4rem;padding:1.7rem;border:1px solid rgba(117,230,165,.3);border-radius:.75rem;background:#102d20}.cta a.primary{display:inline-block;margin-top:.6rem;padding:.75rem 1rem;border-radius:.45rem;background:var(--green);color:#07130c;font-weight:800;text-decoration:none}footer{padding:1.8rem 0 3rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}@media(max-width:650px){.split{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Guide navigation"><a href="../">← CI RESCUE</a><span>FIELD GUIDE 02</span></nav></header>
+  <main>
+    <div class="eyebrow">GitHub Actions · monorepos</div>
+    <h1>When Actions can’t find <code>package-lock.json</code>.</h1>
+    <p class="lede">In a monorepo, two paths must be configured independently: the lockfile that <code>setup-node</code> hashes for caching and the directory where <code>npm ci</code> actually runs.</p>
+
+    <div class="summary"><p><strong>Short version:</strong> checkout first, point <code>cache-dependency-path</code> at the package lock, then set <code>working-directory</code> for the install command. One setting does not replace the other.</p></div>
+
+    <h2>The two controls solve different problems.</h2>
+    <div class="split">
+      <article><h3>cache-dependency-path</h3><p>Tells <code>setup-node</code> which dependency file to hash when package-manager caching is enabled. It accepts subdirectory paths, wildcards, and multiple paths.</p></article>
+      <article><h3>working-directory</h3><p>Tells a <code>run</code> step where to execute. It does not change where a preceding <code>uses: actions/setup-node</code> step searches.</p></article>
+    </div>
+    <p>The setup action caches global package-manager data rather than <code>node_modules</code>. A restored cache therefore does not eliminate the clean install step.</p>
+
+    <h2>A single-package monorepo job.</h2>
+    <p>For a web package at <code>apps/web</code>, keep the paths aligned explicitly:</p>
+    <pre><code>jobs:
+  test-web:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: apps/web
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: apps/web/.nvmrc
+          cache: npm
+          cache-dependency-path: apps/web/package-lock.json
+      - run: npm ci
+      - run: npm test</code></pre>
+    <p><code>defaults.run.working-directory</code> applies to the two <code>run</code> steps. It does not apply to either action step, which is why the setup inputs still use repository-relative paths.</p>
+
+    <h2>Multiple package locks.</h2>
+    <p>If several packages have independent lockfiles, the caching input can hash a list or wildcard:</p>
+    <pre><code>- uses: actions/setup-node@v4
+  with:
+    node-version: 22
+    cache: npm
+    cache-dependency-path: |
+      apps/*/package-lock.json
+      packages/*/package-lock.json</code></pre>
+    <p>That only configures the cache key. Each install still needs an intentional package directory, usually through separate jobs, a matrix, or per-step <code>working-directory</code>.</p>
+
+    <h2>Check these in order.</h2>
+    <ol>
+      <li>Confirm checkout occurs before setup and install; the target directory must exist on the runner.</li>
+      <li>Confirm the lockfile is committed at the exact repository-relative path and matches case.</li>
+      <li>Set <code>cache: npm</code> and the corresponding <code>cache-dependency-path</code>.</li>
+      <li>Set the install step's <code>working-directory</code> or a job-level <code>defaults.run.working-directory</code>.</li>
+      <li>Run <code>npm ci</code>; treat a cache miss as a normal cold start, not automatically as a failure.</li>
+    </ol>
+
+    <h2>Three tempting non-fixes.</h2>
+    <ul class="dont">
+      <li><strong>Copying a child lockfile to the repository root.</strong> That obscures package ownership and can hash a file the install never uses.</li>
+      <li><strong>Setting only <code>working-directory</code>.</strong> It fixes command execution but not the earlier setup action's dependency lookup.</li>
+      <li><strong>Upgrading an action major and changing nothing else.</strong> A supported release cannot infer the intended monorepo path.</li>
+    </ul>
+
+    <div class="boundary"><p><strong>Boundary:</strong> a cache hit proves reusable package-manager data was restored for a matching key. It does not prove dependencies, install scripts, tests, credentials, or hosted services will succeed.</p></div>
+
+    <h2>Primary references.</h2>
+    <ul class="sources">
+      <li><a href="https://github.com/actions/setup-node#caching-global-packages-data">actions/setup-node: caching global package data</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching">GitHub Docs: dependency caching reference</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepsworking-directory">GitHub Docs: step working-directory</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_iddefaultsrunworking-directory">GitHub Docs: defaults.run.working-directory</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Still stuck on one workflow?</h2>
+      <p>CI Rescue provides a focused diagnosis, reviewable patch, and verification report for one failing GitHub Actions job path. Public intake must be sanitized; no credentials or production access are accepted.</p>
+      <a class="primary" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Request a $49 rescue →</a>
+    </div>
+  </main>
+  <footer>CI Rescue field guide · No security review · No invented client claims</footer>
+</body>
+</html>
