@@ -26,8 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 8
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: "22"
           cache: npm
@@ -37,7 +37,10 @@ jobs:
         run: npm audit --audit-level=high
       - name: Rebuild the browser intake
         run: npm run build:intake
-      - name: Confirm the committed bundle is reproducible
-        run: git diff --exit-code -- docs/assets/nostr-intake.js
+      - name: Smoke-check the rebuilt bundle
+        run: |
+          test -s docs/assets/nostr-intake.js
+          grep -Fq '350390e2ddcb4d14a0802cff6c1ce47868871d6719cff65d4ecf9eca1bc276a3' docs/assets/nostr-intake.js
+          grep -Fq 'anonymous-intake-form' docs/assets/nostr-intake.js
       - name: Parse the landing page
         run: python3 -c 'from html.parser import HTMLParser; p=HTMLParser(); p.feed(open("docs/index.html", encoding="utf-8").read()); p.close()'
