@@ -50,6 +50,10 @@ Before sending, the buyer must post the intended amount in the accepted intake i
 
 These examples contain no client data and are not represented as paid-client results.
 
+## Support the free toolkit
+
+If the free toolkit saved you time, optional Bitcoin support is welcome at `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`. Voluntary support is not a service purchase, does not create a delivery obligation or priority, and is separate from CI Rescue intake. See [the support boundary](SUPPORT.md).
+
 ## Delivery boundary
 
 The deliverable can diagnose and patch an inspectable problem. It cannot promise that hosted runners, third-party services, credentials, or infrastructure outside the supplied evidence will behave correctly. See [service terms](SERVICE_TERMS.md).

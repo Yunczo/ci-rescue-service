@@ -102,6 +102,8 @@
     .address { display: block; overflow-wrap: anywhere; margin: 1.25rem 0; padding: 1rem; border: 1px solid rgba(117, 230, 165, .22); border-radius: .55rem; background: rgba(0,0,0,.22); color: var(--green); }
     .secondary { display: inline-block; margin: .45rem .85rem .25rem 0; color: var(--green); }
     .fine { color: var(--muted); font-size: .82rem; }
+    .support-callout { margin-top: 1rem; padding: 1.25rem; border-left: 3px solid var(--green); background: rgba(117, 230, 165, .06); }
+    .support-callout p { margin: .35rem 0; color: var(--muted); }
     footer { padding: 2rem 0 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
 
     @media (max-width: 760px) {
@@ -182,11 +184,23 @@
         <p>The repository includes a synthetic broken-workflow example, its diagnostic report, and the focused patch. It is explicitly a demo—not an invented client result.</p>
         <div class="proof-links">
           <a href="https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip">Free toolkit ↓</a>
+          <a href="#toolkit-support">Support the toolkit</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md">Before / after</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/sample-report.md">Sample report</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/RELEASE_VERIFICATION.md">QA record</a>
           <a href="https://github.com/Yunczo/ci-rescue-service">Repository &amp; terms</a>
         </div>
+      </div>
+    </section>
+
+    <section class="wrap" id="toolkit-support" aria-labelledby="support-title">
+      <div class="support-callout">
+        <div class="eyebrow">Optional</div>
+        <h2 id="support-title">Did the free toolkit save you time?</h2>
+        <p>Voluntary Bitcoin support helps maintain it. This is not a service purchase and creates no delivery, priority, or refund obligation.</p>
+        <code class="address">1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre</code>
+        <a class="secondary" href="bitcoin:1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre?label=CI%20Rescue%20Kit%20Support">Open support request</a>
+        <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service/blob/main/SUPPORT.md">Read support boundary</a>
       </div>
     </section>
 
