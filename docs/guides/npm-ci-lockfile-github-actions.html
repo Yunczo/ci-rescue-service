@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fix npm ci lockfile errors in GitHub Actions | CI Rescue</title>
+  <meta name="description" content="A focused checklist for GitHub Actions npm ci failures caused by missing, stale, mismatched, or misplaced package-lock files.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html">
+  <meta property="og:title" content="Fix npm ci lockfile errors in GitHub Actions">
+  <meta property="og:description" content="Diagnose the first actionable lockfile failure without hiding dependency drift.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html">
+  <style>
+    :root { color-scheme: dark; --bg:#0d0f11; --panel:#171a1e; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; --amber:#ffc56e; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),var(--bg); color:var(--ink); font:17px/1.72 system-ui,-apple-system,sans-serif; }
+    a { color:var(--green); }
+    code, pre, .mono { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
+    header { border-bottom:1px solid var(--line); }
+    nav, main, footer { width:min(840px,calc(100% - 2rem)); margin:auto; }
+    nav { display:flex; justify-content:space-between; gap:1rem; padding:1rem 0; font:700 .86rem ui-monospace,monospace; }
+    nav a { color:var(--ink); text-decoration:none; }
+    main { padding:clamp(3.5rem,9vw,7rem) 0 5rem; }
+    .eyebrow { color:var(--green); font:700 .78rem ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { max-width:800px; margin:.8rem 0 1.2rem; font:800 clamp(2.4rem,7vw,5rem)/1.02 ui-monospace,monospace; letter-spacing:-.065em; }
+    h2 { margin:3.5rem 0 1rem; font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace; letter-spacing:-.04em; }
+    h3 { margin:2rem 0 .6rem; }
+    .lede { max-width:760px; color:#d4d2ca; font-size:1.18rem; }
+    .summary, .boundary { margin:2rem 0; padding:1.25rem 1.4rem; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:.4rem; background:var(--panel); }
+    .summary p, .boundary p { margin:.3rem 0; }
+    table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:.94rem; }
+    th, td { padding:.85rem; border:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:var(--panel); font-family:ui-monospace,monospace; }
+    td:first-child { color:var(--amber); }
+    pre { overflow:auto; padding:1.2rem; border:1px solid var(--line); border-radius:.55rem; background:#111419; color:#d9f7e5; font-size:.88rem; line-height:1.55; }
+    li + li { margin-top:.55rem; }
+    .dont { color:var(--muted); }
+    .cta { margin-top:4rem; padding:1.7rem; border:1px solid rgba(117,230,165,.3); border-radius:.75rem; background:#102d20; }
+    .cta a.primary { display:inline-block; margin-top:.6rem; padding:.75rem 1rem; border-radius:.45rem; background:var(--green); color:#07130c; font-weight:800; text-decoration:none; }
+    .sources { color:var(--muted); font-size:.9rem; }
+    footer { padding:1.8rem 0 3rem; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem; }
+    @media(max-width:650px){ table,thead,tbody,tr,th,td{display:block} thead{display:none} tr{margin:0 0 1rem} td:first-child{background:var(--panel);font-weight:700} }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Guide navigation"><a href="../">← CI RESCUE</a><span>FIELD GUIDE 01</span></nav>
+  </header>
+  <main>
+    <div class="eyebrow">GitHub Actions · npm</div>
+    <h1>Fix <code>npm ci</code> lockfile errors without hiding the drift.</h1>
+    <p class="lede">When a clean CI install fails, the useful clue is usually above the final exit code: <code>package-lock.json</code> is missing, out of sync, generated with different flags, or being read from the wrong directory.</p>
+
+    <div class="summary">
+      <p><strong>Short version:</strong> keep <code>npm ci</code>, align the local Node/npm configuration with CI, regenerate the lockfile intentionally, review the diff, commit it, then reproduce the clean install.</p>
+    </div>
+
+    <h2>Start with the first actionable line.</h2>
+    <p><code>npm ci</code> is deliberately strict. The npm 12 documentation says it requires an existing <code>package-lock.json</code>, exits instead of updating a lockfile that disagrees with <code>package.json</code>, removes an existing <code>node_modules</code>, and does not rewrite dependency manifests. That makes the first precise mismatch more useful than the final generic failure.</p>
+
+    <table>
+      <thead><tr><th>Observed failure</th><th>Most likely check</th></tr></thead>
+      <tbody>
+        <tr><td>No lockfile found</td><td>For npm 12, confirm <code>package-lock.json</code> is committed in the directory where the command runs. Older npm releases can have different accepted inputs, so verify the CI version before applying this guide.</td></tr>
+        <tr><td>Lockfile does not satisfy package.json</td><td>Regenerate the lock using the intended npm version, review both manifests, and commit the resulting lockfile change.</td></tr>
+        <tr><td>Peer-dependency or install-layout mismatch</td><td>Check whether the lock was created with flags such as <code>--legacy-peer-deps</code> or <code>--install-links</code>. CI needs the same project-level configuration.</td></tr>
+        <tr><td>Works locally, fails only in CI</td><td>Print and compare <code>node --version</code>, <code>npm --version</code>, working directory, and the committed lockfile—not a developer's incremental <code>node_modules</code>.</td></tr>
+        <tr><td>Monorepo uses the wrong lock</td><td>Align the step's <code>working-directory</code> and any cache dependency path with the package that owns the relevant lockfile.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>A focused repair sequence.</h2>
+    <p>Run this in a reviewed branch and in the package directory that CI is meant to build:</p>
+    <pre><code>node --version
+npm --version
+git status --short
+
+# Regenerate dependency metadata intentionally.
+npm install
+
+# Inspect every manifest/config change before committing.
+git diff -- package.json package-lock.json .npmrc
+
+# Reproduce the clean CI behavior.
+npm ci</code></pre>
+    <p>If the original lock was produced with tree-shaping flags, npm recommends providing the same flags to <code>npm ci</code>. A committed project-level <code>.npmrc</code> is often clearer than relying on an unrecorded developer-machine setting.</p>
+
+    <h2>Keep the workflow explicit.</h2>
+    <p>GitHub's Node.js workflow guide uses checkout, a declared Node setup step, and <code>npm ci</code>. Using the repository's version file avoids silently testing a different runtime locally and in CI:</p>
+    <pre><code>steps:
+  - uses: actions/checkout@v6
+  - uses: actions/setup-node@v4
+    with:
+      node-version-file: .nvmrc
+      cache: npm
+  - run: npm ci
+  - run: npm test</code></pre>
+    <p>Pin action references according to your repository's dependency policy. Caching can improve speed, but a cache does not repair a disagreeing <code>package.json</code> and lockfile; GitHub documents the cache as a restore/save mechanism keyed by dependency metadata.</p>
+
+    <h2>Three tempting non-fixes.</h2>
+    <ul class="dont">
+      <li><strong>Replacing <code>npm ci</code> with <code>npm install</code> in CI.</strong> That may update the lock relationship instead of exposing it, weakening the reproducibility check.</li>
+      <li><strong>Deleting the lockfile.</strong> This discards the exact dependency tree rather than explaining why it drifted.</li>
+      <li><strong>Clearing caches first.</strong> A stale cache can cause other symptoms, but npm's manifest mismatch is a source/configuration problem. Fix the first actionable error before broad cleanup.</li>
+    </ul>
+
+    <div class="boundary">
+      <p><strong>Boundary:</strong> a clean local <code>npm ci</code> verifies the manifest relationship in that environment. It does not guarantee registry availability, credentials, platform-specific scripts, tests, or third-party services on a hosted runner.</p>
+    </div>
+
+    <h2>Primary references.</h2>
+    <ul class="sources">
+      <li><a href="https://docs.npmjs.com/cli/v12/commands/npm-ci/">npm 12 CLI: npm ci</a></li>
+      <li><a href="https://docs.github.com/en/actions/tutorials/build-and-test-code/nodejs">GitHub Docs: Building and testing Node.js</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching">GitHub Docs: Dependency caching reference</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Still stuck on one workflow?</h2>
+      <p>CI Rescue provides a focused diagnosis, reviewable patch, and verification report for one failing GitHub Actions job path. Public intake must be sanitized; no credentials or production access are accepted.</p>
+      <a class="primary" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Request a $49 rescue →</a>
+    </div>
+  </main>
+  <footer>CI Rescue field guide · No security review · No invented client claims</footer>
+</body>
+</html>
