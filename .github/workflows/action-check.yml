@@ -1,0 +1,67 @@
+name: GitHub Action check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/action-check.yml"
+      - "action.yml"
+      - "action/**"
+      - "toolkit/**"
+  pull_request:
+    paths:
+      - ".github/workflows/action-check.yml"
+      - "action.yml"
+      - "action/**"
+      - "toolkit/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify-action:
+    name: Verify on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 8
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.11"
+      - name: Run toolkit tests
+        env:
+          PYTHONPATH: toolkit
+        run: python -m unittest discover -s toolkit/tests -v
+      - name: Run Action wrapper tests
+        run: python -m unittest discover -s action/tests -v
+      - name: Run the action against its synthetic broken workflow
+        id: rescue
+        uses: ./
+        with:
+          workflow-path: toolkit/examples/broken-workflow.yml
+          log-path: toolkit/examples/npm-lockfile-failure.txt
+          report-path: ci-rescue-action-report.md
+          fail-on: none
+      - name: Verify the generated report and outputs
+        shell: bash
+        env:
+          REPORT_PATH: ${{ steps.rescue.outputs.report-path }}
+          FINDING_COUNT: ${{ steps.rescue.outputs.finding-count }}
+          HIGHEST_SEVERITY: ${{ steps.rescue.outputs.highest-severity }}
+        run: |
+          python - <<'PY'
+          import os
+          from pathlib import Path
+
+          report = Path(os.environ["REPORT_PATH"]).read_text(encoding="utf-8")
+          assert "CI Rescue action report" in report
+          assert "Workflow" in report
+          assert "Saved log" in report
+          assert int(os.environ["FINDING_COUNT"]) > 0
+          assert os.environ["HIGHEST_SEVERITY"] == "error"
+          PY

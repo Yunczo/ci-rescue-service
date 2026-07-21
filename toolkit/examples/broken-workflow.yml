@@ -1,0 +1,19 @@
+name: Broken CI example
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@main
+      - run: npm ci
+      - run: npm test -- --reporter ${{ matrix.reporter
+
+  verify:
+    needs: [build, missing_job]
+    steps:
+      - run: echo "This job has no runner"

@@ -1,0 +1,60 @@
+name: CI Rescue Diagnostic
+description: Offline, read-only diagnostics for one GitHub Actions workflow and an optional saved CI log; Python 3.9+
+author: Yunczo
+
+branding:
+  icon: activity
+  color: green
+
+inputs:
+  workflow-path:
+    description: Repository-relative path to the GitHub Actions workflow to inspect
+    required: true
+  log-path:
+    description: Optional repository-relative path to a sanitized saved CI log
+    required: false
+    default: ""
+  report-path:
+    description: Repository-relative path for the generated Markdown report; an existing file is never replaced
+    required: false
+    default: ci-rescue-report.md
+  fail-on:
+    description: Failure threshold; none disables it, or choose info, warning, or error
+    required: false
+    default: none
+
+outputs:
+  report-path:
+    description: Absolute path to the generated Markdown report on the runner
+    value: ${{ steps.diagnose.outputs.report-path }}
+  finding-count:
+    description: Total number of recognized findings
+    value: ${{ steps.diagnose.outputs.finding-count }}
+  highest-severity:
+    description: Highest recognized severity, or none
+    value: ${{ steps.diagnose.outputs.highest-severity }}
+
+runs:
+  using: composite
+  steps:
+    - id: diagnose
+      shell: bash
+      env:
+        CI_RESCUE_WORKFLOW_PATH: ${{ inputs.workflow-path }}
+        CI_RESCUE_LOG_PATH: ${{ inputs.log-path }}
+        CI_RESCUE_REPORT_PATH: ${{ inputs.report-path }}
+        CI_RESCUE_FAIL_ON: ${{ inputs.fail-on }}
+      run: |
+        set -euo pipefail
+        python_bin=""
+        for candidate in python3 python; do
+          if command -v "$candidate" >/dev/null 2>&1 && "$candidate" -c 'import sys; raise SystemExit(0 if sys.version_info >= (3, 9) else 2)' >/dev/null 2>&1; then
+            python_bin="$(command -v "$candidate")"
+            break
+          fi
+        done
+        if [ -z "$python_bin" ]; then
+          echo "::error title=CI Rescue runtime error::Python 3.9 or newer is required"
+          exit 2
+        fi
+        "$python_bin" "$GITHUB_ACTION_PATH/action/entrypoint.py"

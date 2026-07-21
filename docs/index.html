@@ -104,6 +104,9 @@
     .proof-box p { color: var(--muted); }
     .proof-links { display: flex; flex-wrap: wrap; gap: .7rem; }
     .proof-links a { padding: .65rem .8rem; border: 1px solid var(--line); border-radius: .45rem; text-decoration: none; }
+    .action-box { padding: 1.5rem; border: 1px solid rgba(117, 230, 165, .3); border-radius: .8rem; background: rgba(117, 230, 165, .06); }
+    .action-box pre { margin: 1rem 0; padding: 1rem; overflow-x: auto; border: 1px solid var(--line); border-radius: .45rem; background: rgba(0, 0, 0, .28); color: var(--green); }
+    .action-box p { color: var(--muted); }
 
     .intake { display: grid; grid-template-columns: 1.15fr .85fr; gap: 1rem; align-items: start; }
     .intake-panel { padding: 1.5rem; border: 1px solid var(--line); border-radius: .8rem; background: var(--panel); }
@@ -178,6 +181,20 @@
       <div><b>1 revision</b>Within the accepted scope</div>
     </div>
 
+    <section class="wrap" aria-labelledby="action-title">
+      <div class="action-box">
+        <div class="eyebrow">Free first step</div>
+        <h2 id="action-title">Run an offline diagnostic in your workflow.</h2>
+        <pre><code>- uses: Yunczo/ci-rescue-service@v1
+  with:
+    workflow-path: .github/workflows/ci.yml
+    fail-on: none</code></pre>
+        <p>The Action reads one workflow, writes a Markdown report and job summary, and does not make network requests or edit the inspected files. A clean report means no bundled rule matched—not that the hosted run is guaranteed to pass.</p>
+        <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">See inputs and source →</a>
+        <a class="secondary" href="#anonymous-intake">Still stuck? Request a $49 rescue →</a>
+      </div>
+    </section>
+
     <section class="wrap" aria-labelledby="process-title">
       <h2 id="process-title">A deliberately small engagement.</h2>
       <div class="cards">
@@ -218,6 +235,7 @@
         <p>The repository includes a synthetic broken-workflow example, its diagnostic report, and the focused patch. It is explicitly a demo—not an invented client result.</p>
         <div class="proof-links">
           <a href="https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip">Free toolkit ↓</a>
+          <a href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">Free GitHub Action</a>
           <a href="#toolkit-support">Support the toolkit</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md">Before / after</a>
           <a href="https://github.com/Yunczo/ci-rescue-service/blob/main/examples/sample-report.md">Sample report</a>

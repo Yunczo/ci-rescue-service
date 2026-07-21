@@ -20,6 +20,7 @@ Public GitHub intake: https://github.com/Yunczo/ci-rescue-service/issues/new?tem
 ## Public proof
 
 - Runnable proof workflow: https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml
+- Free offline GitHub Action: https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action
 - Free MIT-licensed toolkit: https://github.com/Yunczo/ci-rescue-service/releases/tag/toolkit-v1.0.0
 - Release verification: https://github.com/Yunczo/ci-rescue-service/blob/main/RELEASE_VERIFICATION.md
 - Synthetic example: https://github.com/Yunczo/ci-rescue-service/blob/main/examples/before-after.md
