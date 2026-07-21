@@ -21,6 +21,15 @@ from ci_rescue.workflow import analyze_workflow  # noqa: E402
 SEVERITY_RANK = {"none": 0, "info": 1, "warning": 2, "error": 3}
 MAX_INPUT_BYTES = 10 * 1024 * 1024
 MAX_SUMMARY_BYTES = 900 * 1024
+RESCUE_FOOTER = (
+    "\n\n---\n\n"
+    "### Still blocked?\n\n"
+    "Fixed-scope repair: **$49 equivalent in Bitcoin** · scope reply within 24h · "
+    "delivery within 48h after accepted payment and sanitized inputs.\n\n"
+    "Review and redact this report, then send it with the first redacted failing excerpt. "
+    "[Request a no-account scope review — no payment yet]"
+    "(https://yunczo.github.io/ci-rescue-service/#anonymous-intake).\n"
+)
 
 
 def _workspace_path(value: str, label: str, *, must_exist: bool) -> Path:
@@ -75,18 +84,20 @@ def _write_new_file(path: Path, content: str) -> None:
             os.close(descriptor)
 
 
-def _summary_content(report: str) -> str:
+def _summary_content(report: str, finding_count: int = 0) -> str:
     """Keep the job summary below GitHub's per-step upload limit."""
-    encoded = report.encode("utf-8")
+    footer = RESCUE_FOOTER if finding_count > 0 else ""
+    complete = report + footer
+    encoded = complete.encode("utf-8")
     if len(encoded) <= MAX_SUMMARY_BYTES:
-        return report
+        return complete
     notice = (
         "\n\n> Job summary truncated to stay below GitHub's upload limit. "
         "The complete Markdown report remains at the `report-path` output.\n"
     )
-    available = MAX_SUMMARY_BYTES - len(notice.encode("utf-8"))
-    prefix = encoded[:available].decode("utf-8", errors="ignore").rstrip()
-    return prefix + notice
+    available = MAX_SUMMARY_BYTES - len((notice + footer).encode("utf-8"))
+    prefix = report.encode("utf-8")[:available].decode("utf-8", errors="ignore").rstrip()
+    return prefix + notice + footer
 
 
 def _workflow_command_value(value: str) -> str:
@@ -130,13 +141,13 @@ def main() -> int:
     report = "\n".join(sections).rstrip() + "\n"
     _write_new_file(report_path, report)
 
+    finding_count = sum(len(analysis.findings) for _, analysis in analyses)
+    highest = _highest(analysis for _, analysis in analyses)
     summary_path = os.environ.get("GITHUB_STEP_SUMMARY")
     if summary_path:
         with Path(summary_path).open("a", encoding="utf-8") as summary:
-            summary.write(_summary_content(report))
+            summary.write(_summary_content(report, finding_count))
 
-    finding_count = sum(len(analysis.findings) for _, analysis in analyses)
-    highest = _highest(analysis for _, analysis in analyses)
     _append_line(os.environ.get("GITHUB_OUTPUT"), f"report-path={report_path}")
     _append_line(os.environ.get("GITHUB_OUTPUT"), f"finding-count={finding_count}")
     _append_line(os.environ.get("GITHUB_OUTPUT"), f"highest-severity={highest}")

@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fix “No files were found” in upload-artifact | CI Rescue</title>
+  <meta name="description" content="Fix GitHub Actions upload-artifact warnings by proving the producer ran, resolving paths from the workspace, and failing clearly when required output is missing.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html">
+  <meta property="og:title" content="Fix upload-artifact: No files were found with the provided path">
+  <meta property="og:description" content="Trace the producing step, workspace-relative path, and file policy instead of hiding the warning.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html">
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; }
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),var(--bg);color:var(--ink);font:17px/1.72 system-ui,-apple-system,sans-serif} a{color:var(--green)} code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace} header{border-bottom:1px solid var(--line)} nav,main,footer{width:min(840px,calc(100% - 2rem));margin:auto} nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;font:700 .86rem ui-monospace,monospace} nav a{color:var(--ink);text-decoration:none} main{padding:clamp(3.5rem,9vw,7rem) 0 5rem}.eyebrow{color:var(--green);font:700 .78rem ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}h1{max-width:800px;margin:.8rem 0 1.2rem;font:800 clamp(2.4rem,7vw,5rem)/1.02 ui-monospace,monospace;letter-spacing:-.065em}h2{margin:3.5rem 0 1rem;font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace;letter-spacing:-.04em}.lede{max-width:760px;color:#d4d2ca;font-size:1.18rem}.summary,.boundary{margin:2rem 0;padding:1.25rem 1.4rem;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:.4rem;background:var(--panel)}.summary p,.boundary p{margin:.3rem 0}pre{overflow:auto;padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:#111419;color:#d9f7e5;font-size:.88rem;line-height:1.55}li+li{margin-top:.55rem}.dont,.sources{color:var(--muted)}.sources{font-size:.9rem}.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.split article{padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:var(--panel)}.split h3{margin-top:0;font-family:ui-monospace,monospace}.cta{margin-top:4rem;padding:1.7rem;border:1px solid rgba(117,230,165,.3);border-radius:.75rem;background:#102d20}.cta a.primary{display:inline-block;margin:.6rem .55rem 0 0;padding:.75rem 1rem;border-radius:.45rem;background:var(--green);color:#07130c;font-weight:800;text-decoration:none}footer{padding:1.8rem 0 3rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}@media(max-width:650px){.split{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Guide navigation"><a href="../">← CI RESCUE</a><span>FIELD GUIDE 03</span></nav></header>
+  <main>
+    <div class="eyebrow">GitHub Actions · artifacts</div>
+    <h1>When <code>upload-artifact</code> finds no files.</h1>
+    <p class="lede">The upload step is usually reporting a symptom: the producer wrote somewhere else, never ran, or produced nothing. Prove which one happened before changing the upload policy.</p>
+    <pre><code>Warning: No files were found with the provided path: apps/web/dist.
+No artifacts will be uploaded.</code></pre>
+
+    <div class="summary"><p><strong>Short version:</strong> verify the producing step succeeded, print the expected output path, make the artifact path relative to the checked-out workspace, and use <code>if-no-files-found: error</code> when that output is required.</p></div>
+
+    <h2>Why a successful build can still miss the path.</h2>
+    <div class="split">
+      <article><h3>Run-step directory</h3><p>A build command with <code>working-directory: apps/web</code> may create <code>apps/web/dist</code> relative to the repository workspace.</p></article>
+      <article><h3>Action input path</h3><p>The later <code>uses: actions/upload-artifact</code> step does not inherit that run-step directory. Give it the actual workspace-relative output path.</p></article>
+    </div>
+
+    <h2>A job that proves the handoff.</h2>
+    <pre><code>jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Build the web package
+        run: npm ci &amp;&amp; npm run build
+        working-directory: apps/web
+
+      - name: Prove an upload-eligible file exists
+        shell: bash
+        run: |
+          set -euo pipefail
+          first_file="$(find apps/web/dist -type f ! -path '*/.*' -print -quit)"
+          if [ -z "$first_file" ]; then
+            echo "No non-hidden build file exists under apps/web/dist" &gt;&amp;2
+            exit 1
+          fi
+          find apps/web/dist -type f ! -path '*/.*' -print
+
+      - name: Upload the web build
+        uses: actions/upload-artifact@v7
+        with:
+          name: web-dist
+          path: apps/web/dist/
+          if-no-files-found: error</code></pre>
+    <p>This Ubuntu example fails at the first missing boundary, requires at least one non-hidden regular file, and shows the files that will be handed off. That matches the action's default exclusion of hidden files. The upload path is explicit, repository-relative, and independent of the build command's working directory.</p>
+
+    <h2>Check these in order.</h2>
+    <ol>
+      <li>Open the producing step, not only the upload step. Confirm it ran, was not skipped by an <code>if</code> condition, and exited successfully.</li>
+      <li>Find the command's actual current directory and output setting. A framework may write to <code>build</code>, <code>dist</code>, <code>target</code>, or a configured custom directory.</li>
+      <li>Check case exactly. Linux runners distinguish <code>Dist</code> from <code>dist</code>.</li>
+      <li>Add a temporary, bounded listing of the expected directory. Avoid dumping the entire workspace or environment into public logs.</li>
+      <li>Use <code>if-no-files-found: error</code> for required deliverables. Keep the default warning only when an empty result is genuinely acceptable.</li>
+    </ol>
+
+    <h2>Three tempting non-fixes.</h2>
+    <ul class="dont">
+      <li><strong>Changing the warning to ignore.</strong> That hides a missing required artifact without creating it.</li>
+      <li><strong>Adding broad <code>**/*</code> globs.</strong> This can upload unrelated files and still leaves the producing path unexplained.</li>
+      <li><strong>Running the build again inside the upload step.</strong> The official action uploads existing output; keep production and handoff as separate, inspectable steps.</li>
+    </ul>
+
+    <div class="boundary"><p><strong>Boundary:</strong> a successful upload proves matching files were packaged. It does not prove the artifact is complete, executable after extraction, safe to publish, or valid for a later deployment.</p></div>
+
+    <h2>Primary references.</h2>
+    <ul class="sources">
+      <li><a href="https://github.com/actions/upload-artifact">actions/upload-artifact: current inputs and examples</a></li>
+      <li><a href="https://docs.github.com/en/actions/concepts/workflows-and-actions/workflow-artifacts">GitHub Docs: workflow artifacts</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepsworking-directory">GitHub Docs: run-step working-directory</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Diagnose before you buy.</h2>
+      <p>Run the free offline CI Rescue Action against one workflow and an optional sanitized log. If the report still leaves the hosted failure unresolved, request a focused diagnosis, reviewable patch, and verification report for one failing job path.</p>
+      <a class="primary" href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">Run the free diagnostic →</a>
+      <a class="primary" href="../#anonymous-intake">Request a $49 rescue →</a>
+    </div>
+  </main>
+  <footer>CI Rescue field guide · No security review · No invented client claims</footer>
+</body>
+</html>

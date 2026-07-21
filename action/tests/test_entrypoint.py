@@ -42,10 +42,11 @@ class ActionEntrypointTests(unittest.TestCase):
     def test_large_job_summary_is_truncated_below_the_upload_limit(self) -> None:
         report = "é" * entrypoint.MAX_SUMMARY_BYTES
 
-        summary = entrypoint._summary_content(report)
+        summary = entrypoint._summary_content(report, finding_count=1)
 
         self.assertLessEqual(len(summary.encode("utf-8")), entrypoint.MAX_SUMMARY_BYTES)
         self.assertIn("Job summary truncated", summary)
+        self.assertIn("Request a no-account scope review", summary)
         self.assertNotEqual(summary, report)
 
     def test_main_writes_report_summary_and_outputs(self) -> None:
@@ -101,6 +102,12 @@ class ActionEntrypointTests(unittest.TestCase):
                     self.assertEqual(entrypoint.main(), 1)
 
                 self.assertTrue((workspace / "report.md").is_file())
+                report = (workspace / "report.md").read_text(encoding="utf-8")
+                summary = (workspace / "summary.md").read_text(encoding="utf-8")
+                self.assertNotIn("Request a no-account scope review", report)
+                self.assertIn("Request a no-account scope review", summary)
+                self.assertIn("Review and redact this report", summary)
+                self.assertIn("no payment yet", summary)
                 outputs = (workspace / "outputs.txt").read_text(encoding="utf-8")
                 self.assertIn("highest-severity=error", outputs)
         finally:

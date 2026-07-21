@@ -77,6 +77,7 @@
     .price span { color: var(--muted); font-size: .88rem; }
     .cta { display: inline-flex; justify-content: center; margin-top: 1.3rem; width: 100%; padding: .9rem 1.1rem; border-radius: .55rem; background: var(--green); color: #07130c; font-weight: 800; text-decoration: none; transition: transform .15s ease, background .15s ease; }
     .cta:hover { transform: translateY(-2px); background: #9af0bd; }
+    .price .fine { margin: .65rem 0 0; }
 
     .strip { display: grid; grid-template-columns: repeat(3, 1fr); border-block: 1px solid var(--line); }
     .strip div { padding: 1.25rem 0; color: var(--muted); }
@@ -170,7 +171,8 @@
       <aside class="price" aria-label="Offer summary">
         <strong>$49</strong>
         <span>USD equivalent in Bitcoin · scope reply within 24h</span>
-        <a class="cta" href="#anonymous-intake">Request a rescue →</a>
+        <a class="cta" href="#anonymous-intake">Send for scope review — no payment →</a>
+        <p class="fine">No login or email. Pay only after written scope acceptance.</p>
         <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Or use GitHub intake</a>
       </aside>
     </div>
@@ -191,7 +193,7 @@
     fail-on: none</code></pre>
         <p>The Action reads one workflow, writes a Markdown report and job summary, and does not make network requests or edit the inspected files. A clean report means no bundled rule matched—not that the hosted run is guaranteed to pass.</p>
         <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">See inputs and source →</a>
-        <a class="secondary" href="#anonymous-intake">Still stuck? Request a $49 rescue →</a>
+        <a class="secondary" href="#anonymous-intake">Still stuck? Send for $49 scope review — no payment yet →</a>
       </div>
     </section>
 
@@ -252,6 +254,7 @@
       <div class="proof-links">
         <a href="guides/npm-ci-lockfile-github-actions.html">Fix npm ci lockfile errors →</a>
         <a href="guides/package-lock-monorepo-github-actions.html">Find package-lock in a monorepo →</a>
+        <a href="guides/upload-artifact-no-files-found-github-actions.html">Fix upload-artifact missing files →</a>
       </div>
     </section>
 
@@ -279,7 +282,7 @@
               <input type="checkbox" name="sanitized" required>
               <span>I removed secrets, tokens, private URLs, personal data, proprietary source, and production details.</span>
             </label>
-            <button type="submit">Encrypt and send request</button>
+            <button type="submit">Send for scope review — no payment yet</button>
           </form>
         </div>
         <aside class="intake-panel" aria-label="Anonymous ticket inbox">
