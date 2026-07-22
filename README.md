@@ -14,7 +14,7 @@ Paste a sanitized GitHub Actions excerpt into the [local log triage tool](https:
 Add the offline, read-only analyzer to a workflow after checkout:
 
 ```yaml
-- uses: Yunczo/ci-rescue-service@v1
+- uses: Yunczo/ci-rescue-diagnostic-action@v1
   with:
     workflow-path: .github/workflows/ci.yml
     fail-on: none
@@ -25,6 +25,8 @@ It reads one repository-relative workflow and, optionally, one saved sanitized l
 Optional inputs are `log-path`, `report-path`, and `fail-on` (`none`, `info`, `warning`, or `error`). Outputs are `report-path`, `finding-count`, and `highest-severity`. Upload the report in a later step if you want it as a run artifact. For maximum supply-chain assurance, pin the Action to a reviewed full commit SHA instead of a moving major tag.
 
 The Action is tested on GitHub-hosted Linux, macOS, and Windows runners. A self-hosted runner needs Bash and Python 3.9 or newer.
+
+The dedicated [CI Rescue Diagnostic Action repository](https://github.com/Yunczo/ci-rescue-diagnostic-action) is the recommended source for new workflows. The copy in this service repository remains available for existing references.
 
 The rules cover common workflow structure, action-reference, lockfile, test-command, timeout, and artifact-path failures. A clean report means only that no bundled rule matched; it is not a guarantee that a hosted run will pass.
 
@@ -72,7 +74,7 @@ Before sending, the buyer must confirm the intended amount in the accepted intak
 - [Exact broken workflow](examples/broken-workflow.yml) and [corrected workflow](examples/fixed-workflow.yml)
 - [Release verification record](RELEASE_VERIFICATION.md)
 - [Download the free MIT-licensed offline toolkit](https://github.com/Yunczo/ci-rescue-service/releases/download/toolkit-v1.0.0/CI_Rescue_Kit_v1.0.0.zip) used for these synthetic proof artifacts
-- [Run the free GitHub Action](https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action) without downloading the toolkit
+- [Run the free GitHub Action](https://github.com/Yunczo/ci-rescue-diagnostic-action) without downloading the toolkit
 - The underlying release passed 38 automated tests, a 5,000-input fuzz smoke, a clean offline install, and a large-workflow performance check.
 
 These examples contain no client data and are not represented as paid-client results.
