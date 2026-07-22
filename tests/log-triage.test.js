@@ -87,3 +87,14 @@ test("browser source contains no outbound network primitive", async () => {
   assert.doesNotMatch(source, /WebSocket/);
   assert.doesNotMatch(source, /sendBeacon/);
 });
+
+test("browser source contains no persistence or HTML injection primitive", async () => {
+  const source = await readFile(new URL("../src/log-triage.js", import.meta.url), "utf8");
+
+  assert.doesNotMatch(source, /localStorage/);
+  assert.doesNotMatch(source, /sessionStorage/);
+  assert.doesNotMatch(source, /indexedDB/);
+  assert.doesNotMatch(source, /document\.cookie/);
+  assert.doesNotMatch(source, /innerHTML/);
+  assert.doesNotMatch(source, /insertAdjacentHTML/);
+});
