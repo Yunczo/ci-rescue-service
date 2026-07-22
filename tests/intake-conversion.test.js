@@ -97,7 +97,7 @@ test("intake markup and source keep ticket status while adding local accessible 
   );
   assert.match(
     home,
-    /<button type="submit">[^<]+<\/button>\s*<div class="intake-submit-status" id="anonymous-intake-submit-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden><\/div>/,
+    /<button type="submit" disabled>[^<]+<\/button>\s*<noscript><p>JavaScript is required for encrypted intake\. Nothing can be submitted from this form while it is unavailable\.<\/p><\/noscript>\s*<div class="intake-submit-status" id="anonymous-intake-submit-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden><\/div>/,
   );
   assert.match(home, /id="anonymous-intake-status" role="status" aria-live="polite"/);
   assert.match(source, /updateIntakeStatus\(status, submissionStatus, message, state, options\)/);
@@ -107,6 +107,10 @@ test("intake markup and source keep ticket status while adding local accessible 
   );
   assert.equal(source.match(/focusSubmission: true/g)?.length, 3);
   assert.match(source, /useSubmission: true/);
+  assert.match(source, /form\.addEventListener\("submit", async \(event\) =>/);
+  assert.ok(source.indexOf("submitButton.disabled = false") > source.indexOf('form.addEventListener("submit"'));
+  assert.doesNotMatch(home, /name="(?:summary|publicUrl|details|sanitized)"/);
+  assert.doesNotMatch(source, /new FormData\(form\)/);
   assert.doesNotMatch(source, /mirrorSubmission/);
   assert.doesNotMatch(source, /submissionStatus\.innerHTML/);
 

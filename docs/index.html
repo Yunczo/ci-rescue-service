@@ -298,21 +298,22 @@
           <form class="intake-form" id="anonymous-intake-form" novalidate>
             <label>
               Failure or migration summary
-              <input name="summary" required maxlength="180" placeholder="Example: Node 24 warning or first failing job path">
+              <input id="anonymous-intake-summary" required maxlength="180" placeholder="Example: Node 24 warning or first failing job path">
             </label>
             <label>
               Public repository or run URL (optional)
-              <input name="publicUrl" type="url" maxlength="500" placeholder="https://github.com/owner/repo/actions/runs/…">
+              <input id="anonymous-intake-public-url" type="url" maxlength="500" placeholder="https://github.com/owner/repo/actions/runs/…">
             </label>
             <label>
               Minimal sanitized evidence
-              <textarea name="details" required maxlength="3000" placeholder="For Node 24: GitHub.com or GHES, hosted or self-hosted, runner version/OS/architecture, current action refs, and any temporary opt-out. For failures: workflow path, failing step, exact redacted error, expected result, and runtime versions."></textarea>
+              <textarea id="anonymous-intake-details" required maxlength="3000" placeholder="For Node 24: GitHub.com or GHES, hosted or self-hosted, runner version/OS/architecture, current action refs, and any temporary opt-out. For failures: workflow path, failing step, exact redacted error, expected result, and runtime versions."></textarea>
             </label>
             <label class="check">
-              <input type="checkbox" name="sanitized" required>
+              <input id="anonymous-intake-sanitized" type="checkbox" required>
               <span>I removed secrets, tokens, private URLs, personal data, proprietary source, and production details.</span>
             </label>
-            <button type="submit">Send for scope review — no payment yet</button>
+            <button type="submit" disabled>Send for scope review — no payment yet</button>
+            <noscript><p>JavaScript is required for encrypted intake. Nothing can be submitted from this form while it is unavailable.</p></noscript>
             <div class="intake-submit-status" id="anonymous-intake-submit-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></div>
           </form>
         </div>

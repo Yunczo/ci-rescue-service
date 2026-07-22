@@ -21,6 +21,11 @@ const STORAGE_KEY = "ci-rescue-anonymous-ticket-key-v1";
 const SENT_AT_KEY = "ci-rescue-anonymous-ticket-sent-at-v1";
 
 const form = document.querySelector("#anonymous-intake-form");
+const submitButton = form?.querySelector("button[type='submit']");
+const summaryInput = document.querySelector("#anonymous-intake-summary");
+const publicUrlInput = document.querySelector("#anonymous-intake-public-url");
+const detailsInput = document.querySelector("#anonymous-intake-details");
+const sanitizedInput = document.querySelector("#anonymous-intake-sanitized");
 const status = document.querySelector("#anonymous-intake-status");
 const submissionStatus = document.querySelector("#anonymous-intake-submit-status");
 const node24OfferSummary = document.querySelector("#node24-intake-summary");
@@ -30,6 +35,11 @@ const refreshButton = document.querySelector("#anonymous-intake-refresh");
 
 if (
   !form ||
+  !submitButton ||
+  !summaryInput ||
+  !publicUrlInput ||
+  !detailsInput ||
+  !sanitizedInput ||
   !status ||
   !submissionStatus ||
   !node24OfferSummary ||
@@ -57,8 +67,7 @@ ticket.textContent = ticketNpub;
 const requestType = new URLSearchParams(window.location.search).get("request");
 if (requestType === "node24") {
   node24OfferSummary.hidden = false;
-  const summaryInput = form.elements.namedItem("summary");
-  if (summaryInput instanceof HTMLInputElement && !summaryInput.value) {
+  if (!summaryInput.value) {
     summaryInput.value = "GitHub Actions Node 24 migration review";
   }
 }
@@ -145,16 +154,14 @@ async function loadReplies() {
 
 form.addEventListener("submit", async (event) => {
   event.preventDefault();
-  const submitButton = form.querySelector("button[type='submit']");
-  const formData = new FormData(form);
   const payload = {
     version: 1,
     requestId: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
     ticketPublicKey,
-    summary: String(formData.get("summary") || "").trim(),
-    publicUrl: String(formData.get("publicUrl") || "").trim(),
-    details: String(formData.get("details") || "").trim(),
+    summary: summaryInput.value.trim(),
+    publicUrl: publicUrlInput.value.trim(),
+    details: detailsInput.value.trim(),
   };
 
   if (!form.checkValidity()) {
@@ -162,7 +169,7 @@ form.addEventListener("submit", async (event) => {
     return;
   }
 
-  if (!payload.summary || !payload.details || !formData.get("sanitized")) {
+  if (!payload.summary || !payload.details || !sanitizedInput.checked) {
     setStatus(
       "Complete the required fields and confirm the evidence is sanitized.",
       "error",
@@ -206,6 +213,8 @@ form.addEventListener("submit", async (event) => {
     submitButton.disabled = false;
   }
 });
+
+submitButton.disabled = false;
 
 refreshButton.addEventListener("click", loadReplies);
 
