@@ -38,7 +38,7 @@ The rules cover common workflow structure, action-reference, lockfile, test-comm
 
 **US$49 equivalent in Bitcoin · scope response within 24 hours · delivery within 2 days · one revision**
 
-The service covers one workflow and one failing job path. I review the workflow plus the smallest relevant sanitized log excerpt, identify the first actionable cause, produce an in-scope patch, and return a concise delivery report with verification evidence.
+The service covers one workflow and either one failing job path or one defined proactive Node 24 migration goal. I review the workflow plus the smallest relevant sanitized warning or log excerpt, identify the first actionable cause or migration boundary, produce an in-scope patch, and return a concise delivery report with verification evidence.
 
 [Open the no-account encrypted intake](https://yunczo.github.io/ci-rescue-service/#anonymous-intake) or [use a public service-request issue](../../issues/new?template=service-request.yml) to confirm scope before paying. In either channel, remove secrets, tokens, private URLs, personal data, proprietary source, and production details. A redacted minimal reproduction is preferred.
 

@@ -43,6 +43,14 @@ const ticketPublicKey = getPublicKey(ticketSecretKey);
 const ticketNpub = nip19.npubEncode(ticketPublicKey);
 ticket.textContent = ticketNpub;
 
+const requestType = new URLSearchParams(window.location.search).get("request");
+if (requestType === "node24") {
+  const summaryInput = form.elements.namedItem("summary");
+  if (summaryInput instanceof HTMLInputElement && !summaryInput.value) {
+    summaryInput.value = "GitHub Actions Node 24 migration review";
+  }
+}
+
 function setStatus(message, state = "neutral") {
   status.textContent = message;
   status.dataset.state = state;
@@ -174,4 +182,6 @@ refreshButton.addEventListener("click", loadReplies);
 
 if (window.localStorage.getItem(SENT_AT_KEY)) {
   loadReplies();
+} else if (requestType === "node24") {
+  setStatus("Node 24 migration scope selected. Add only sanitized public evidence; no payment is due yet.");
 }

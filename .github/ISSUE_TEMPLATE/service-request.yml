@@ -1,5 +1,5 @@
 name: CI Rescue service request
-description: Request a scoped $49 diagnosis and patch for one failing GitHub Actions workflow.
+description: Request a scoped $49 repair or proactive Node 24 migration for one GitHub Actions workflow.
 title: "[Service request] "
 labels:
   - service-request
@@ -9,23 +9,24 @@ body:
       value: |
         This issue is public. Remove secrets, tokens, private URLs, personal data, and proprietary source. A scope response is normally posted within 24 hours. Do not send Bitcoin until a reply explicitly accepts the scope and confirms the exact BTC amount, address, quote expiry, and delivery window.
   - type: dropdown
-    id: failure_area
+    id: request_area
     attributes:
-      label: Failure area
+      label: Request area
       options:
+        - Proactive Node 24 migration
         - Workflow structure or job configuration
         - Dependency install or lockfile
         - Test discovery or command path
         - Cache or artifact path
         - Timeout or action reference
-        - Other non-security CI failure
+        - Other non-security CI request
     validations:
       required: true
   - type: input
-    id: language
+    id: runner_context
     attributes:
-      label: Language and package manager
-      placeholder: "Example: Node 22 and npm 10"
+      label: Runner and runtime context
+      placeholder: "Example: GitHub.com, ubuntu-latest, GitHub-hosted, Node 22 and npm 10"
     validations:
       required: true
   - type: textarea
@@ -37,13 +38,11 @@ body:
     validations:
       required: true
   - type: textarea
-    id: minimal_log
+    id: minimal_evidence
     attributes:
-      label: Sanitized failing-log excerpt
-      description: Paste the first actionable failure and a few surrounding lines; remove secrets and private data.
+      label: Sanitized warning or failing-log excerpt
+      description: If available, paste the first actionable warning or failure and a few surrounding lines. A proactive migration may state that the workflow is not failing yet. Remove secrets and private data.
       render: text
-    validations:
-      required: true
   - type: input
     id: last_passing
     attributes:

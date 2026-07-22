@@ -4,10 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CI Rescue — GitHub Actions repair for $49</title>
-  <meta name="description" content="A fixed-scope diagnosis and reviewable patch for one failing GitHub Actions workflow. $49, two-day delivery, one revision.">
+  <meta name="description" content="A fixed-scope repair or proactive Node 24 migration for one GitHub Actions workflow. $49, two-day delivery, one revision.">
   <meta name="robots" content="index,follow">
   <meta property="og:title" content="CI Rescue — GitHub Actions repair for $49">
-  <meta property="og:description" content="One failing workflow. One focused diagnosis. One reviewable patch.">
+  <meta property="og:description" content="One workflow repair or Node 24 migration. One reviewable patch.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/">
   <meta property="og:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
@@ -16,7 +16,7 @@
   <meta property="og:image:alt" content="CI Rescue Kit — offline GitHub Actions diagnostics">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="CI Rescue — GitHub Actions repair for $49">
-  <meta name="twitter:description" content="One failing workflow. One focused diagnosis. One reviewable patch.">
+  <meta name="twitter:description" content="One workflow repair or Node 24 migration. One reviewable patch.">
   <meta name="twitter:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
   <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/">
   <script type="application/ld+json">
@@ -24,7 +24,7 @@
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "CI Rescue",
-    "description": "Fixed-scope diagnosis and repair for one failing GitHub Actions workflow.",
+    "description": "Fixed-scope repair or proactive Node 24 migration for one GitHub Actions workflow.",
     "provider": {"@type": "Person", "name": "Yunczo"},
     "areaServed": "Worldwide",
     "offers": {
@@ -157,16 +157,16 @@
   <header>
     <nav class="wrap" aria-label="Main navigation">
       <a class="brand" href="#top">CI RESCUE</a>
-      <span class="status">Accepting one-workflow requests</span>
+      <span class="status">Accepting one-workflow repairs and Node 24 migrations</span>
     </nav>
   </header>
 
   <main id="top">
     <div class="wrap hero">
       <div>
-        <div class="eyebrow">GitHub Actions diagnosis + patch</div>
-        <h1>Get one failing workflow unstuck.</h1>
-        <p class="lede">A focused root-cause diagnosis, a reviewable patch, and verification evidence—without handing over credentials or production access.</p>
+        <div class="eyebrow">GitHub Actions repair + Node 24 migration</div>
+        <h1>Repair one workflow—or migrate it to Node 24.</h1>
+        <p class="lede">Get a focused root-cause diagnosis or proactive migration review, a reviewable patch, and verification evidence—without handing over credentials or production access.</p>
       </div>
       <aside class="price" aria-label="Offer summary">
         <strong>$49</strong>
@@ -178,7 +178,7 @@
     </div>
 
     <div class="wrap strip" aria-label="Service details">
-      <div><b>1 workflow</b>One failing job path</div>
+      <div><b>1 workflow</b>One failing path or Node 24 migration</div>
       <div><b>2 days</b>After confirmed payment and inputs</div>
       <div><b>1 revision</b>Within the accepted scope</div>
     </div>
@@ -213,6 +213,7 @@
         <h3>Good fit</h3>
         <ul>
           <li>Workflow YAML or job configuration</li>
+          <li>Proactive Node 24 action-reference migration</li>
           <li>Dependency installation and lockfiles</li>
           <li>Test discovery and command paths</li>
           <li>Cache, artifact, timeout, or action-reference failures</li>
@@ -279,8 +280,8 @@
           <p>This page creates a random ticket key in your browser and encrypts the request to the CI Rescue service key before publishing it through independent Nostr relays. Relay metadata is public; do not send secrets, private source, credentials, or personal data.</p>
           <form class="intake-form" id="anonymous-intake-form">
             <label>
-              Failure summary
-              <input name="summary" required maxlength="180" placeholder="Example: npm ci cannot find the monorepo lockfile">
+              Failure or migration summary
+              <input name="summary" required maxlength="180" placeholder="Example: Node 24 warning or first failing job path">
             </label>
             <label>
               Public repository or run URL (optional)
@@ -288,7 +289,7 @@
             </label>
             <label>
               Minimal sanitized evidence
-              <textarea name="details" required maxlength="3000" placeholder="Workflow path, failing step, exact redacted error, expected result, and runtime versions"></textarea>
+              <textarea name="details" required maxlength="3000" placeholder="For Node 24: GitHub.com or GHES, hosted or self-hosted, runner version/OS/architecture, current action refs, and any temporary opt-out. For failures: workflow path, failing step, exact redacted error, expected result, and runtime versions."></textarea>
             </label>
             <label class="check">
               <input type="checkbox" name="sanitized" required>

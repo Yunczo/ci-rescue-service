@@ -10,7 +10,7 @@ Public GitHub intake: https://github.com/Yunczo/ci-rescue-service/issues/new?tem
 ## Service
 
 - Price: US$49 equivalent in Bitcoin, quoted in writing before payment.
-- Scope: one GitHub Actions workflow and one failing job path.
+- Scope: one GitHub Actions workflow and either one failing job path or one defined proactive Node 24 migration goal.
 - Response: normally within 24 hours.
 - Delivery: within 48 hours after confirmed payment and sanitized inputs.
 - Deliverable: focused diagnosis, reviewable patch or unified diff, verification report, and one in-scope revision.

@@ -2,14 +2,14 @@
 
 ## Scope confirmation
 
-No payment is requested until either the no-account anonymous inbox or a public GitHub intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. A scope response is normally posted within 24 hours. An acceptance reply must state the accepted USD price, the exact BTC amount, the payment address, the quote expiry, and the delivery window. The BTC quote expires after 24 hours unless the acceptance reply states otherwise.
+No payment is requested until either the no-account anonymous inbox or a public GitHub intake issue contains enough sanitized evidence to confirm that the request fits the advertised one-workflow scope. The workflow may have one failing job path or one defined proactive Node 24 migration goal. A scope response is normally posted within 24 hours. An acceptance reply must state the accepted USD price, the exact BTC amount, the payment address, the quote expiry, and the delivery window. The BTC quote expires after 24 hours unless the acceptance reply states otherwise.
 
 ## Delivery
 
 The US$49 Rescue package includes:
 
 - one GitHub Actions workflow;
-- one failing job path;
+- one failing job path or one defined Node 24 migration goal;
 - one focused patch or unified diff;
 - a short root-cause and verification report; and
 - one revision addressing the originally accepted failure.
