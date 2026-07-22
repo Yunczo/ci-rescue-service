@@ -3,7 +3,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:intake": "esbuild src/nostr-intake.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/nostr-intake.js"
+    "build:intake": "esbuild src/nostr-intake.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/nostr-intake.js",
+    "build:triage": "esbuild src/log-triage.js --bundle --format=esm --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/log-triage.js",
+    "build:site": "npm run build:intake && npm run build:triage",
+    "test": "node --test tests/*.test.js"
   },
   "dependencies": {
     "nostr-tools": "2.24.1"

@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Free GitHub Actions log analyzer — browser-only, no upload | CI Rescue</title>
+  <meta name="description" content="Paste a sanitized GitHub Actions log and match common CI failure signatures entirely in your browser. No account, upload, or network request from the analyzer.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html">
+  <meta property="og:title" content="Free browser-only GitHub Actions log analyzer">
+  <meta property="og:description" content="Match common CI failure signatures locally. No account and no log upload.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html">
+  <meta property="og:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d0f11;
+      --panel: #171a1e;
+      --panel-soft: rgba(24, 27, 31, .82);
+      --ink: #f7f4ea;
+      --muted: #aaa9a2;
+      --line: #30343a;
+      --green: #75e6a5;
+      --green-dark: #102d20;
+      --amber: #ffc56e;
+      --red: #ff8f88;
+      --blue: #9ac6ff;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 9% 4%, rgba(40, 129, 84, .2), transparent 28rem),
+        radial-gradient(circle at 92% 14%, rgba(164, 107, 32, .12), transparent 24rem),
+        var(--bg);
+      font: 16px/1.65 system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--green); }
+    code, textarea, button, .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    header { border-bottom: 1px solid var(--line); }
+    nav, main, footer { width: min(980px, calc(100% - 2rem)); margin: auto; }
+    nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1rem 0; font: 700 .86rem ui-monospace, monospace; }
+    nav a { color: var(--ink); text-decoration: none; }
+    nav span { color: var(--muted); }
+    main { padding: clamp(3rem, 8vw, 6.5rem) 0 5rem; }
+    .eyebrow { color: var(--green); font: 700 .78rem ui-monospace, monospace; letter-spacing: .12em; text-transform: uppercase; }
+    h1 { max-width: 900px; margin: .8rem 0 1.2rem; font: 800 clamp(2.5rem, 7vw, 5.4rem)/1.01 ui-monospace, monospace; letter-spacing: -.065em; }
+    h2 { margin: 0 0 1rem; font: 800 clamp(1.5rem, 4vw, 2.4rem)/1.15 ui-monospace, monospace; letter-spacing: -.04em; }
+    h3 { margin: .75rem 0 .45rem; font: 800 1.15rem/1.3 ui-monospace, monospace; }
+    .lede { max-width: 770px; color: #d4d2ca; font-size: 1.15rem; }
+    .privacy-proof { display: grid; grid-template-columns: repeat(3, 1fr); gap: .8rem; margin: 2rem 0; }
+    .privacy-proof div { padding: 1rem; border: 1px solid var(--line); border-radius: .55rem; background: var(--panel-soft); }
+    .privacy-proof strong { display: block; margin-bottom: .25rem; font: 800 .9rem ui-monospace, monospace; color: var(--green); }
+    .privacy-proof span { color: var(--muted); font-size: .88rem; }
+    .boundary { margin: 2rem 0; padding: 1.1rem 1.25rem; border: 1px solid var(--line); border-left: 3px solid var(--amber); border-radius: .45rem; background: var(--panel); color: #d8d4c8; }
+    .boundary strong { color: var(--amber); }
+
+    form { margin-top: 2.4rem; }
+    label { display: block; margin-bottom: .55rem; font: 800 .9rem ui-monospace, monospace; }
+    textarea {
+      display: block;
+      width: 100%;
+      min-height: 20rem;
+      resize: vertical;
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: .65rem;
+      background: #101317;
+      color: #e9eee9;
+      font-size: .86rem;
+      line-height: 1.55;
+    }
+    textarea:focus { outline: 2px solid var(--green); outline-offset: 2px; }
+    textarea::placeholder { color: #777d80; }
+    .input-meta { display: flex; justify-content: space-between; gap: 1rem; margin-top: .55rem; color: var(--muted); font-size: .78rem; }
+    .controls { display: flex; flex-wrap: wrap; gap: .65rem; margin: 1rem 0 1.5rem; }
+    button {
+      padding: .75rem 1rem;
+      border: 1px solid var(--line);
+      border-radius: .45rem;
+      background: transparent;
+      color: var(--ink);
+      font-size: .86rem;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    button[type="submit"] { border-color: var(--green); background: var(--green); color: #07130c; }
+    button:hover { transform: translateY(-1px); }
+    button:focus-visible, a:focus-visible { outline: 2px solid var(--green); outline-offset: 2px; }
+    noscript { display: block; margin: 1rem 0; padding: 1rem; border: 1px solid var(--amber); color: var(--amber); }
+
+    .status { min-height: 3.25rem; padding: .9rem 1rem; border: 1px solid var(--line); border-left: 3px solid var(--line); border-radius: .4rem; background: var(--panel); color: var(--muted); }
+    .status[data-state="found"] { border-left-color: var(--green); color: #d9f7e5; }
+    .status[data-state="clean"] { border-left-color: var(--blue); color: #d9e9ff; }
+    .status[data-state="warning"] { border-left-color: var(--amber); color: #f3d6a7; }
+    .results { display: grid; gap: .9rem; margin-top: 1rem; }
+    .finding { padding: 1.2rem; border: 1px solid var(--line); border-radius: .6rem; background: var(--panel-soft); }
+    .finding-error { border-left: 3px solid var(--red); }
+    .finding-warning { border-left: 3px solid var(--amber); }
+    .finding-info { border-left: 3px solid var(--blue); }
+    .finding-heading { display: flex; justify-content: space-between; flex-wrap: wrap; gap: .7rem; }
+    .finding-code, .severity { font: 700 .72rem ui-monospace, monospace; text-transform: uppercase; letter-spacing: .06em; }
+    .finding-code, .evidence { color: var(--muted); }
+    .severity-error { color: var(--red); }
+    .severity-warning { color: var(--amber); }
+    .severity-info { color: var(--blue); }
+    .finding p { margin: .45rem 0; }
+    .remediation { color: #d4d2ca; }
+    .evidence { font: .78rem/1.5 ui-monospace, monospace; }
+    .guide-link { display: inline-block; margin-top: .55rem; font-weight: 750; }
+    .empty-result { margin: 0; padding: 1rem; border: 1px solid var(--line); border-radius: .45rem; color: var(--muted); }
+
+    .next { margin-top: 4rem; display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .next article { padding: 1.4rem; border: 1px solid var(--line); border-radius: .65rem; background: var(--panel-soft); }
+    .next article:last-child { border-color: rgba(117, 230, 165, .35); background: var(--green-dark); }
+    .next p { color: #c8c7c0; }
+    .primary { display: inline-block; padding: .72rem .9rem; border-radius: .42rem; background: var(--green); color: #07130c; font-weight: 800; text-decoration: none; }
+    footer { padding: 1.8rem 0 3rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .82rem; }
+
+    @media (max-width: 700px) {
+      .privacy-proof, .next { grid-template-columns: 1fr; }
+      nav span { display: none; }
+      h1 { letter-spacing: -.055em; }
+      textarea { min-height: 17rem; }
+      .input-meta { display: block; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Tool navigation">
+      <a href="../">← CI RESCUE</a>
+      <span>LOCAL LOG TRIAGE</span>
+    </nav>
+  </header>
+
+  <main>
+    <div class="eyebrow">Free · browser-only · no account</div>
+    <h1>Find the first useful clue in a failed Actions log.</h1>
+    <p class="lede">Paste a <strong>sanitized</strong> GitHub Actions excerpt. This page matches focused failure signatures locally and shows line numbers, next checks, and relevant field guides without reproducing your raw log in the result.</p>
+
+    <div class="privacy-proof" aria-label="Privacy properties">
+      <div><strong>No upload</strong><span>The analyzer makes no network request. The page policy blocks outbound connections.</span></div>
+      <div><strong>No persistence</strong><span>The tool does not save your log to cookies, local storage, or a server.</span></div>
+      <div><strong>No account</strong><span>There is no sign-in, email gate, tracking script, or payment step.</span></div>
+    </div>
+
+    <div class="boundary">
+      <strong>Sanitize first.</strong> Even with local processing, do not paste secrets, tokens, private URLs, personal data, proprietary source, or production details. Browser extensions and your device remain outside this page's control.
+    </div>
+
+    <form id="log-triage-form" autocomplete="off">
+      <label for="log-input">Sanitized log excerpt</label>
+      <textarea id="log-input" name="log" maxlength="500000" spellcheck="false" placeholder="Include the failing command, the first exact error, and only the smallest useful surrounding context…"></textarea>
+      <div class="input-meta">
+        <span id="log-counter">0 / 500,000 characters · 0 lines</span>
+        <span>Nothing is sent when you analyze.</span>
+      </div>
+      <div class="controls">
+        <button type="submit">Analyze locally</button>
+        <button type="button" id="load-sample">Load synthetic sample</button>
+        <button type="button" id="clear-log">Clear</button>
+      </div>
+    </form>
+
+    <noscript>JavaScript is required for local analysis. No log is sent anywhere when JavaScript is enabled.</noscript>
+    <div class="status" id="triage-status" data-state="idle" role="status" aria-live="polite">Nothing analyzed yet.</div>
+    <section class="results" id="triage-results" aria-label="Diagnostic findings" hidden></section>
+
+    <div class="next" aria-label="Next steps">
+      <article>
+        <h2>Want repeatable checks?</h2>
+        <p>The free, offline GitHub Action analyzes a repository-relative workflow and an optional sanitized saved log, then writes a reviewable Markdown report.</p>
+        <a href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">Install the free Action →</a>
+      </article>
+      <article>
+        <h2>Need the patch?</h2>
+        <p>One failing workflow, one focused diagnosis, and one reviewable patch for $49 equivalent in Bitcoin. Scope and the exact amount are confirmed in writing before payment.</p>
+        <a class="primary" href="../#anonymous-intake">Send for scope review — no payment yet →</a>
+      </article>
+    </div>
+  </main>
+
+  <footer>CI Rescue local log triage · Pattern matches are clues, not a guarantee · No security or vulnerability review</footer>
+  <script type="module" src="../assets/log-triage.js"></script>
+</body>
+</html>

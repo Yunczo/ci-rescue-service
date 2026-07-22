@@ -35,12 +35,27 @@ jobs:
         run: npm ci --ignore-scripts --no-audit --no-fund
       - name: Audit dependencies
         run: npm audit --audit-level=high
-      - name: Rebuild the browser intake
-        run: npm run build:intake
-      - name: Smoke-check the rebuilt bundle
+      - name: Rebuild browser assets
+        run: npm run build:site
+      - name: Run browser-tool tests
+        run: npm test
+      - name: Smoke-check the rebuilt bundles
         run: |
           test -s docs/assets/nostr-intake.js
+          test -s docs/assets/log-triage.js
           grep -Fq '350390e2ddcb4d14a0802cff6c1ce47868871d6719cff65d4ecf9eca1bc276a3' docs/assets/nostr-intake.js
           grep -Fq 'anonymous-intake-form' docs/assets/nostr-intake.js
-      - name: Parse the landing page
-        run: python3 -c 'from html.parser import HTMLParser; p=HTMLParser(); p.feed(open("docs/index.html", encoding="utf-8").read()); p.close()'
+          grep -Fq 'log-triage-form' docs/assets/log-triage.js
+          grep -Fq "connect-src 'none'" docs/tools/github-actions-log-triage.html
+      - name: Parse every HTML page
+        run: |
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+
+          for page in sorted(Path("docs").rglob("*.html")):
+              parser = HTMLParser()
+              parser.feed(page.read_text(encoding="utf-8"))
+              parser.close()
+              print(page)
+          PY

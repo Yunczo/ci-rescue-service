@@ -5,6 +5,10 @@
 
 One failing GitHub Actions workflow, one focused diagnosis, and one reviewable patch.
 
+## Try the free browser-only log triage
+
+Paste a sanitized GitHub Actions excerpt into the [local log triage tool](https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html). It matches focused failure signatures in the browser, makes no analyzer network request, stores nothing, and reports line numbers without reproducing raw log text. Sanitize first: browser extensions and the local device remain outside the page boundary.
+
 ## Run the free diagnostic Action
 
 Add the offline, read-only analyzer to a workflow after checkout:

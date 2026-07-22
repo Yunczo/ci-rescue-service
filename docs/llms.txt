@@ -34,6 +34,12 @@ The examples are synthetic and are not represented as paid-client results.
 - upload-artifact missing files: https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html
 - pytest exit code 5 / no tests collected: https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html
 
+## Free browser tool
+
+- Local GitHub Actions log triage: https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html
+
+The analyzer matches focused failure signatures entirely in the browser. Its Content Security Policy blocks outbound connections, it has no tracking or persistence code, and result evidence contains line numbers rather than raw log text. Users must still sanitize inputs because browser extensions and the user's device are outside the page boundary.
+
 ## Payment boundaries
 
 Service buyers must not pay before an intake reply confirms scope, exact BTC amount, address, quote expiry, and delivery window. Voluntary toolkit support is separate from the service and creates no delivery or priority obligation.

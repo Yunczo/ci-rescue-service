@@ -1,0 +1,328 @@
+const MAX_CHARACTERS = 500_000;
+
+const GUIDE_ROOT = "https://yunczo.github.io/ci-rescue-service/guides/";
+
+export const SIGNATURES = Object.freeze([
+  {
+    code: "LOG101",
+    severity: "error",
+    confidence: "high",
+    title: "Runner storage is exhausted",
+    patterns: [/no space left on device/i, /enospc/i],
+    summary: "A command could not write because the runner filesystem ran out of free space or inodes.",
+    remediation: "Measure free space with df -h, then remove unneeded caches or build outputs, reduce image layers, or split the job.",
+  },
+  {
+    code: "LOG102",
+    severity: "error",
+    confidence: "high",
+    title: "Process likely exceeded memory",
+    patterns: [/javascript heap out of memory/i, /fatal process out of memory/i, /killed process .* out of memory/i],
+    summary: "The log explicitly reports that the process exhausted its memory allowance.",
+    remediation: "Measure the peak, then reduce parallelism or memory use, split the job, or select a runner with enough memory.",
+  },
+  {
+    code: "LOG103",
+    severity: "error",
+    confidence: "high",
+    title: "Command is missing from PATH",
+    patterns: [/command not found/i, /process completed with exit code 127/i, /is not recognized as an internal or external command/i],
+    summary: "The shell could not locate a requested executable.",
+    remediation: "Install the tool in an earlier step, use the correct setup action, and print its version before use.",
+  },
+  {
+    code: "LOG104",
+    severity: "error",
+    confidence: "medium",
+    title: "Operation was denied",
+    patterns: [/resource not accessible by integration/i, /permission denied/i, /http 403/i, /status code: 403/i],
+    summary: "The job reached an operation that the runner process or workflow token is not allowed to perform.",
+    remediation: "Identify the denied operation, then grant only its documented workflow permission or correct the relevant local file ownership or mode.",
+  },
+  {
+    code: "LOG105",
+    severity: "error",
+    confidence: "high",
+    title: "npm lockfile is out of sync",
+    patterns: [/npm ci.*can only install packages when.*(?:package-lock|npm-shrinkwrap).*in sync/i, /package\.json and .*lock.*not in sync/i],
+    summary: "npm ci rejected dependency metadata because the committed lockfile and package manifest do not agree.",
+    remediation: "Use the repository's intended npm version, refresh the lockfile intentionally, review and commit the diff, then reproduce npm ci locally.",
+    guide: `${GUIDE_ROOT}npm-ci-lockfile-github-actions.html`,
+  },
+  {
+    code: "LOG106",
+    severity: "error",
+    confidence: "medium",
+    title: "pytest collected no tests",
+    patterns: [/no tests ran/i, /collected 0 items/i, /pytest.*exit code 5/i],
+    summary: "pytest found no matching tests; by default that condition exits with status 5.",
+    remediation: "Check the test path, discovery naming, configuration, working directory, and conditional markers. Do not mask the exit unless an empty suite is intentional.",
+    guide: `${GUIDE_ROOT}pytest-exit-code-5-no-tests-github-actions.html`,
+  },
+  {
+    code: "LOG107",
+    severity: "error",
+    confidence: "medium",
+    title: "Job or step timed out",
+    patterns: [/timed out after/i, /exceeded the maximum execution time/i],
+    summary: "The runner stopped waiting before the command completed.",
+    remediation: "Find the slow step, add bounded retries only for transient work, remove deadlocks, and set a measured timeout-minutes value.",
+  },
+  {
+    code: "LOG108",
+    severity: "error",
+    confidence: "high",
+    title: "Git rejected repository ownership",
+    patterns: [/detected dubious ownership/i],
+    summary: "Git's repository ownership check does not trust the current workspace path.",
+    remediation: "Correct checkout ownership when possible; otherwise add only the exact workspace path to Git's safe.directory configuration.",
+  },
+  {
+    code: "LOG109",
+    severity: "error",
+    confidence: "medium",
+    title: "Action reference could not be resolved",
+    patterns: [/unable to resolve action/i, /repository not found.*actions/i, /can't find .*action\.ya?ml/i],
+    summary: "GitHub Actions could not fetch or load the referenced action and ref.",
+    remediation: "Verify the owner, repository, path, and release ref. For a local action, ensure checkout runs first and the metadata file is committed.",
+  },
+  {
+    code: "LOG110",
+    severity: "error",
+    confidence: "high",
+    title: "pnpm frozen lockfile check failed",
+    patterns: [/err_pnpm_outdated_lockfile/i, /err_pnpm_broken_lockfile/i, /pnpm.*frozen-lockfile.*cannot/i, /pnpm.*lockfile is broken/i],
+    summary: "pnpm determined that the lockfile does not match the project manifest or selected pnpm version.",
+    remediation: "Use the repository's declared pnpm version, update the lockfile intentionally, review and commit it, then retry the frozen install locally.",
+  },
+  {
+    code: "LOG111",
+    severity: "error",
+    confidence: "high",
+    title: "Script has incompatible line endings",
+    patterns: [/\/bin\/(?:ba)?sh\^m/i, /bad interpreter:.*\^m/i, /\$'\\r': command not found/i],
+    summary: "A shell script appears to contain CRLF line endings on a Unix runner.",
+    remediation: "Convert the script to LF and enforce the intended line ending with .gitattributes.",
+  },
+  {
+    code: "LOG112",
+    severity: "warning",
+    confidence: "high",
+    title: "Artifact pattern matched no files",
+    patterns: [/no files were found with the provided path/i, /no files found for artifact/i],
+    summary: "The artifact upload step did not find output at the configured path.",
+    remediation: "Confirm the producing step ran, inspect the runner working directory, and correct the artifact path or conditional.",
+    guide: `${GUIDE_ROOT}upload-artifact-no-files-found-github-actions.html`,
+  },
+  {
+    code: "LOG113",
+    severity: "error",
+    confidence: "medium",
+    title: "Docker registry pull was throttled",
+    patterns: [/toomanyrequests.*pull rate limit/i, /docker hub.*rate limit/i, /docker.*429 too many requests/i],
+    summary: "The job exceeded a registry's anonymous or account pull allowance.",
+    remediation: "Reduce repeated pulls, use an appropriate cache, or use an approved authenticated mirror configured by the repository owner.",
+  },
+  {
+    code: "LOG114",
+    severity: "error",
+    confidence: "medium",
+    title: "npm cannot find the intended lockfile",
+    patterns: [/enoent.*package-lock\.json/i, /could not read.*package-lock\.json/i, /can only install with an existing package-lock\.json/i],
+    summary: "The npm step appears to be running where its intended package-lock.json is not available.",
+    remediation: "Confirm checkout, the step working-directory, the committed lockfile location, and any cache-dependency-path used by a monorepo package.",
+    guide: `${GUIDE_ROOT}package-lock-monorepo-github-actions.html`,
+  },
+  {
+    code: "LOG115",
+    severity: "error",
+    confidence: "high",
+    title: "A command exceeded the operating system argument limit",
+    patterns: [/argument list too long/i],
+    summary: "The shell attempted to pass more command-line data than the runner permits.",
+    remediation: "Keep large content in a file or on standard input. For jq, prefer --rawfile or --slurpfile instead of expanding file contents into one shell argument.",
+  },
+]);
+
+const FAILURE_MARKERS = [
+  /process completed with exit code [1-9][0-9]*/i,
+  /##\[error\]/i,
+  /error:/i,
+  /npm err! code/i,
+];
+
+function matchingLines(lines, patterns) {
+  const matches = [];
+  lines.forEach((line, index) => {
+    if (patterns.some((pattern) => pattern.test(line))) matches.push(index + 1);
+  });
+  return matches;
+}
+
+function evidenceFor(lineNumbers) {
+  const shown = lineNumbers.slice(0, 8);
+  const suffix = lineNumbers.length > shown.length ? ` (+${lineNumbers.length - shown.length} more)` : "";
+  return `Signature matched on line(s): ${shown.join(", ")}${suffix}. Raw log text is not reproduced.`;
+}
+
+export function analyzeLog(text) {
+  if (typeof text !== "string") throw new TypeError("Log input must be text.");
+  if (text.length > MAX_CHARACTERS) throw new RangeError(`Log input exceeds ${MAX_CHARACTERS.toLocaleString()} characters.`);
+
+  const lines = text.split(/\r?\n/);
+  const findings = [];
+
+  for (const signature of SIGNATURES) {
+    const lineNumbers = matchingLines(lines, signature.patterns);
+    if (lineNumbers.length > 0) {
+      findings.push({
+        ...signature,
+        lineNumbers,
+        evidence: evidenceFor(lineNumbers),
+      });
+    }
+  }
+
+  const hasRecognizedError = findings.some((finding) => finding.severity === "error");
+  if (text.trim() && !hasRecognizedError) {
+    const lineNumbers = matchingLines(lines, FAILURE_MARKERS);
+    if (lineNumbers.length > 0) {
+      findings.push({
+        code: "LOG199",
+        severity: "info",
+        confidence: "low",
+        title: "Unclassified failure marker",
+        summary: "The log contains a failure marker, but it does not match a focused signature in this browser tool.",
+        remediation: "Start at the first failing command, reproduce that exact command locally, and inspect the first error rather than the final exit-code line.",
+        lineNumbers,
+        evidence: evidenceFor(lineNumbers),
+      });
+    }
+  }
+
+  const severityOrder = { error: 0, warning: 1, info: 2 };
+  findings.sort((left, right) => (severityOrder[left.severity] ?? 99) - (severityOrder[right.severity] ?? 99) || left.code.localeCompare(right.code));
+
+  return {
+    findings,
+    stats: {
+      characters: text.length,
+      lines: text ? lines.length : 0,
+    },
+  };
+}
+
+function appendText(parent, tagName, text, className) {
+  const element = document.createElement(tagName);
+  if (className) element.className = className;
+  element.textContent = text;
+  parent.append(element);
+  return element;
+}
+
+function renderFinding(finding) {
+  const article = document.createElement("article");
+  article.className = `finding finding-${finding.severity}`;
+
+  const headingRow = document.createElement("div");
+  headingRow.className = "finding-heading";
+  appendText(headingRow, "span", `${finding.code} · ${finding.confidence} confidence`, "finding-code");
+  appendText(headingRow, "span", finding.severity, `severity severity-${finding.severity}`);
+  article.append(headingRow);
+
+  appendText(article, "h3", finding.title);
+  appendText(article, "p", finding.summary);
+  appendText(article, "p", `Next check: ${finding.remediation}`, "remediation");
+  appendText(article, "p", finding.evidence, "evidence");
+
+  if (finding.guide) {
+    const link = document.createElement("a");
+    link.className = "guide-link";
+    link.href = finding.guide;
+    link.textContent = "Open the focused field guide →";
+    article.append(link);
+  }
+
+  return article;
+}
+
+function initializeTool() {
+  const form = document.querySelector("#log-triage-form");
+  const input = document.querySelector("#log-input");
+  const results = document.querySelector("#triage-results");
+  const status = document.querySelector("#triage-status");
+  const counter = document.querySelector("#log-counter");
+  const sampleButton = document.querySelector("#load-sample");
+  const clearButton = document.querySelector("#clear-log");
+  if (!form || !input || !results || !status || !counter || !sampleButton || !clearButton) return;
+
+  const updateCounter = () => {
+    const lines = input.value ? input.value.split(/\r?\n/).length : 0;
+    counter.textContent = `${input.value.length.toLocaleString()} / ${MAX_CHARACTERS.toLocaleString()} characters · ${lines.toLocaleString()} lines`;
+  };
+
+  const clearResults = () => {
+    results.replaceChildren();
+    results.hidden = true;
+    status.textContent = "Nothing analyzed yet.";
+    status.dataset.state = "idle";
+  };
+
+  input.addEventListener("input", updateCounter);
+
+  sampleButton.addEventListener("click", () => {
+    input.value = [
+      "Run npm ci",
+      "npm ERR! code EUSAGE",
+      "npm ci can only install packages when package.json and package-lock.json are in sync.",
+      "Process completed with exit code 1",
+    ].join("\n");
+    updateCounter();
+    clearResults();
+    input.focus();
+  });
+
+  clearButton.addEventListener("click", () => {
+    input.value = "";
+    updateCounter();
+    clearResults();
+    input.focus();
+  });
+
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    results.replaceChildren();
+
+    try {
+      const analysis = analyzeLog(input.value);
+      results.hidden = false;
+
+      if (!input.value.trim()) {
+        status.textContent = "Paste a sanitized log before analyzing.";
+        status.dataset.state = "warning";
+        results.hidden = true;
+        input.focus();
+        return;
+      }
+
+      if (analysis.findings.length === 0) {
+        status.textContent = "No bundled signature matched. This is not a passing verdict; inspect the first failing command and exact error.";
+        status.dataset.state = "clean";
+        appendText(results, "p", "The browser tool found no known pattern in this excerpt. Try including the first error and the command immediately above it, with secrets and private data removed.", "empty-result");
+        return;
+      }
+
+      status.textContent = `${analysis.findings.length} focused finding${analysis.findings.length === 1 ? "" : "s"} from ${analysis.stats.lines.toLocaleString()} lines. Raw log text stays in this tab.`;
+      status.dataset.state = "found";
+      analysis.findings.forEach((finding) => results.append(renderFinding(finding)));
+    } catch (error) {
+      status.textContent = error instanceof Error ? error.message : "The log could not be analyzed.";
+      status.dataset.state = "warning";
+      results.hidden = true;
+    }
+  });
+
+  updateCounter();
+}
+
+if (typeof document !== "undefined") initializeTool();

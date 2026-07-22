@@ -186,12 +186,13 @@
     <section class="wrap" aria-labelledby="action-title">
       <div class="action-box">
         <div class="eyebrow">Free first step</div>
-        <h2 id="action-title">Run an offline diagnostic in your workflow.</h2>
+        <h2 id="action-title">Start with a private, free diagnostic.</h2>
         <pre><code>- uses: Yunczo/ci-rescue-service@v1
   with:
     workflow-path: .github/workflows/ci.yml
     fail-on: none</code></pre>
-        <p>The Action reads one workflow, writes a Markdown report and job summary, and does not make network requests or edit the inspected files. A clean report means no bundled rule matched—not that the hosted run is guaranteed to pass.</p>
+        <p>Paste a sanitized log into the browser-only triage tool for an immediate clue, or run the Action against a workflow and optional saved log. Neither analyzer makes network requests or edits the inspected input. A clean result means no bundled rule matched—not that the hosted run is guaranteed to pass.</p>
+        <a class="secondary" href="tools/github-actions-log-triage.html">Paste a sanitized log — no upload →</a>
         <a class="secondary" href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">See inputs and source →</a>
         <a class="secondary" href="#anonymous-intake">Still stuck? Send for $49 scope review — no payment yet →</a>
       </div>
