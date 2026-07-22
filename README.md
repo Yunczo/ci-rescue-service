@@ -1,9 +1,9 @@
-# CI Rescue — focused GitHub Actions repair
+# CI Rescue — GitHub Actions repair or Node 24 migration
 
 [![Public proof](https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml/badge.svg)](https://github.com/Yunczo/ci-rescue-service/actions/workflows/public-proof.yml)
 [![GitHub Action check](https://github.com/Yunczo/ci-rescue-service/actions/workflows/action-check.yml/badge.svg)](https://github.com/Yunczo/ci-rescue-service/actions/workflows/action-check.yml)
 
-One failing GitHub Actions workflow, one focused diagnosis, and one reviewable patch.
+One GitHub Actions workflow with either one failing job path or one proactive Node 24 migration goal, one focused diagnosis or migration review, and one reviewable patch.
 
 ## Try the free browser-only log triage
 
@@ -46,6 +46,7 @@ The no-account route creates a random ticket key in the buyer's browser and uses
 
 ## Included
 
+- Proactive Node 24 action-reference migration for one workflow
 - Workflow YAML structure and job configuration
 - Dependency-install and lockfile failures
 - Test discovery and command-path problems

@@ -12,11 +12,11 @@ The US$49 Rescue package includes:
 - one failing job path or one defined Node 24 migration goal;
 - one focused patch or unified diff;
 - a short root-cause and verification report; and
-- one revision addressing the originally accepted failure.
+- one revision addressing the originally accepted failure or migration goal.
 
 The default delivery window is 48 hours from confirmed payment and receipt of the required sanitized inputs.
 
-The included revision must be requested within seven calendar days of delivery and must address the originally accepted failure. New workflows, failure paths, or requirements are a new scope.
+The included revision must be requested within seven calendar days of delivery and must address the originally accepted failure or migration goal. New workflows, failure paths, migration goals, or requirements are a new scope.
 
 ## Buyer safety
 
