@@ -34,6 +34,7 @@ The examples are synthetic and are not represented as paid-client results.
 - upload-artifact missing files: https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html
 - pytest exit code 5 / no tests collected: https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html
 - GitHub Actions Node 24 migration checklist: https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html
+- Synthetic GitHub Actions Node 24 migration proof: https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration-proof.html
 
 ## Free browser tool
 

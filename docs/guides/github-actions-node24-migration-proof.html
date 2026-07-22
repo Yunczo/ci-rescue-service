@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'none'; font-src 'none'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="A clearly labeled synthetic GitHub Actions Node 24 migration diff, with every change mapped to primary GitHub evidence and narrow repository-local hosted proof.">
+  <meta name="robots" content="index,follow">
+  <title>Synthetic GitHub Actions Node 24 migration proof | CI Rescue</title>
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration-proof.html">
+  <meta property="og:title" content="Synthetic GitHub Actions Node 24 migration proof">
+  <meta property="og:description" content="Inspect a reviewable before/after workflow diff, its primary sources, and the exact limits of a real repository-local hosted run.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration-proof.html">
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --soft:#111419; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; --amber:#ffc56e; --red:#ff9d9d; --blue:#9ac6ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),radial-gradient(circle at 92% 15%,rgba(67,107,166,.12),transparent 26rem),var(--bg); color:var(--ink); font:17px/1.7 system-ui,-apple-system,sans-serif; }
+    a { color:var(--green); }
+    code,pre,.mono { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
+    header { border-bottom:1px solid var(--line); }
+    nav,main,footer { width:min(1040px,calc(100% - 2rem)); margin:auto; }
+    nav { display:flex; justify-content:space-between; gap:1rem; padding:1rem 0; font:700 .86rem ui-monospace,monospace; }
+    nav a { color:var(--ink); text-decoration:none; }
+    nav span { color:var(--muted); }
+    main { padding:clamp(3.5rem,9vw,7rem) 0 5rem; }
+    .eyebrow { color:var(--green); font:700 .78rem ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { max-width:980px; margin:.8rem 0 1.2rem; font:800 clamp(2.35rem,6.5vw,5rem)/1.02 ui-monospace,monospace; letter-spacing:-.065em; }
+    h2 { margin:3.5rem 0 1rem; font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace; letter-spacing:-.04em; }
+    h3 { margin:.2rem 0 .75rem; font:800 1rem/1.3 ui-monospace,monospace; }
+    .lede { max-width:900px; color:#d4d2ca; font-size:1.18rem; }
+    .label { display:inline-block; margin-bottom:.8rem; padding:.25rem .5rem; border:1px solid var(--amber); border-radius:.3rem; color:var(--amber); font:800 .72rem ui-monospace,monospace; letter-spacing:.07em; text-transform:uppercase; }
+    .notice,.run-proof,.limits { margin:2rem 0; padding:1.3rem 1.45rem; border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:.5rem; background:var(--panel); }
+    .notice p,.run-proof p,.limits p { margin:.35rem 0; }
+    .workflow-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .workflow-card { min-width:0; padding:1.15rem; border:1px solid var(--line); border-radius:.6rem; background:var(--panel); }
+    .workflow-card.before { border-top:3px solid var(--red); }
+    .workflow-card.after { border-top:3px solid var(--green); }
+    pre { overflow:auto; margin:0; padding:1.15rem; border:1px solid var(--line); border-radius:.5rem; background:var(--soft); color:#d9f7e5; font-size:.84rem; line-height:1.55; }
+    .diff .minus { color:var(--red); }
+    .diff .plus { color:var(--green); }
+    table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:.94rem; }
+    th,td { padding:.9rem; border:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:var(--panel); font-family:ui-monospace,monospace; }
+    td:first-child { color:var(--amber); }
+    td code { overflow-wrap:anywhere; }
+    .run-proof { border-left-color:var(--green); background:#102d20; }
+    .proof-links { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:1rem; }
+    .proof-links a { display:inline-block; padding:.6rem .75rem; border:1px solid rgba(117,230,165,.42); border-radius:.4rem; background:rgba(7,19,12,.45); font-weight:750; text-decoration:none; }
+    li+li { margin-top:.55rem; }
+    .limits { border-left-color:var(--blue); }
+    .sources { color:var(--muted); font-size:.9rem; }
+    .cta { margin-top:4rem; padding:1.7rem; border:1px solid rgba(117,230,165,.35); border-radius:.75rem; background:#102d20; }
+    .cta h2 { margin:0 0 .7rem; }
+    .cta .primary { display:inline-block; margin-top:.65rem; padding:.78rem 1rem; border-radius:.45rem; background:var(--green); color:#07130c; font-weight:800; text-decoration:none; }
+    .fine { color:var(--muted); font-size:.88rem; }
+    footer { padding:1.8rem 0 3rem; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem; }
+    @media(max-width:760px){ .workflow-grid{grid-template-columns:1fr} nav span{display:none} table,thead,tbody,tr,th,td{display:block} thead{display:none} tr{margin:0 0 1rem} td:first-child{background:var(--panel);font-weight:700} h1{letter-spacing:-.055em} }
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Proof navigation"><a href="../">← CI RESCUE</a><span>SYNTHETIC PROOF 01</span></nav></header>
+  <main>
+    <div class="eyebrow">GitHub Actions · evidence snapshot July 22, 2026</div>
+    <h1>A reviewable Node 24 action-runtime migration, without a universal-success claim.</h1>
+    <p class="lede">This page shows the kind of small, source-backed patch included in a focused migration review. The input, output, and diff are synthetic. They contain no client data and are not presented as paid-client work.</p>
+
+    <div class="notice">
+      <span class="label">Synthetic example — not client work</span>
+      <p>The “before” workflow is a deliberately small migration input, not a captured customer failure. The “after” workflow is a review target for GitHub.com-hosted runners, not a promise that the job or any other repository will pass.</p>
+    </div>
+
+    <h2>Clearly labeled synthetic before and after.</h2>
+    <div class="workflow-grid">
+      <article class="workflow-card before">
+        <h3>Synthetic BEFORE · temporary Node 20 path</h3>
+        <pre><code>name: CI
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test</code></pre>
+      </article>
+      <article class="workflow-card after">
+        <h3>Synthetic AFTER · reviewed Node 24-capable refs</h3>
+        <pre><code>name: CI
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm test</code></pre>
+      </article>
+    </div>
+
+    <h2>Reviewable synthetic workflow diff.</h2>
+    <pre class="diff"><code> jobs:
+   test:
+     runs-on: ubuntu-latest
+<span class="minus">-    env:</span>
+<span class="minus">-      ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true</span>
+     steps:
+<span class="minus">-      - uses: actions/checkout@v4</span>
+<span class="minus">-      - uses: actions/setup-node@v4</span>
+<span class="plus">+      - uses: actions/checkout@v7</span>
+<span class="plus">+      - uses: actions/setup-node@v7</span>
+         with:
+           node-version-file: .nvmrc
+           cache: npm</code></pre>
+
+    <h2>Every changed line maps to primary evidence.</h2>
+    <table>
+      <thead><tr><th>Diff change</th><th>Reason and boundary</th><th>Primary GitHub evidence</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Remove the Node 20 opt-out</td>
+          <td>GitHub describes <code>ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true</code> as a temporary escape hatch and says it will stop working when Node 20 is removed from the runner. Removal is the completion criterion here, after compatible action refs and the real job are reviewed.</td>
+          <td><a href="https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/">GitHub Changelog: Node 20 deprecation on Actions runners</a></td>
+        </tr>
+        <tr>
+          <td><code>checkout@v4</code> → <code>checkout@v7</code></td>
+          <td><code>checkout@v5.0.0</code> is the documented Node 24 floor. This synthetic target uses the reviewed July 2026 snapshot <code>v7.0.1</code> and aligns with the ref currently exercised by this repository. A project can choose the floor or an immutable release SHA after reviewing intervening changes; <code>@v7</code> is not a universal requirement.</td>
+          <td><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">Node 24 floor: v5.0.0</a><br><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">Snapshot release: v7.0.1</a></td>
+        </tr>
+        <tr>
+          <td><code>setup-node@v4</code> → <code>setup-node@v7</code></td>
+          <td><code>setup-node@v5.0.0</code> is the documented Node 24 floor. The existing <code>node-version-file</code> and <code>cache</code> inputs remain visible and unchanged; the example does not silently replace the project's Node version. As above, <code>@v7</code> is a reviewed example target, not a blind global replacement rule.</td>
+          <td><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">Node 24 floor: v5.0.0</a><br><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">Snapshot release: v7.0.0</a></td>
+        </tr>
+      </tbody>
+    </table>
+    <p class="fine">“Node 24 migration” here refers to the JavaScript runtime bundled by GitHub Actions. It does not require changing the application runtime selected by <code>setup-node</code>. The release notes for both Node 24 floors require Actions Runner v2.327.1 or later.</p>
+
+    <h2>What the real hosted run proves.</h2>
+    <div class="run-proof">
+      <span class="label">Repository-local evidence only</span>
+      <p>A successful GitHub-hosted site-check run at commit <code>a3420d0</code> executed <code>actions/checkout@v7</code> and <code>actions/setup-node@v7</code> in this repository. The workflow revision is linked so those exact refs and inputs can be inspected.</p>
+      <p><strong>That is the entire claim:</strong> those two current refs executed successfully in that one repository job. The run did not execute the synthetic workflow above, and its <code>setup-node</code> input selected project Node 22—not Node 24. It does not prove another workflow, matrix, runner, repository, or service will pass.</p>
+      <div class="proof-links">
+        <a href="https://github.com/Yunczo/ci-rescue-service/actions/runs/29933717773">Inspect successful hosted run 29933717773 →</a>
+        <a href="https://github.com/Yunczo/ci-rescue-service/blob/a3420d0e514369d51e10e40e876951e85d7e3e9d/.github/workflows/site-check.yml">Inspect workflow at the run's commit →</a>
+      </div>
+    </div>
+
+    <h2>Limits and non-generalization.</h2>
+    <div class="limits">
+      <ul>
+        <li>This is a synthetic example, not a paid-client result, endorsement, benchmark, or success guarantee.</li>
+        <li>It covers two GitHub-owned JavaScript actions on a GitHub.com-hosted <code>ubuntu-latest</code> job. It does not cover third-party, local, Docker, or composite actions.</li>
+        <li>It does not test pinned commit SHAs, self-hosted runner versions, macOS or ARM32 constraints, GitHub Enterprise Server, reusable workflows, artifacts, services, matrices, secrets, permissions beyond <code>contents: read</code>, or external dependencies.</li>
+        <li>Major action upgrades can change inputs, defaults, prerequisites, and behavior. Read every relevant release note and use immutable reviewed SHAs when policy requires them.</li>
+        <li>A clean static review and a green repository-local run are prerequisites and evidence, not proof of future hosted behavior. Run the exact job path and inspect its first actionable failure.</li>
+        <li>This is migration guidance, not a security review. Never submit credentials, private logs, proprietary source, or production details.</li>
+      </ul>
+    </div>
+
+    <h2>Primary references used for this proof.</h2>
+    <ul class="sources">
+      <li><a href="https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/">GitHub Changelog: Deprecation of Node 20 on GitHub Actions runners</a></li>
+      <li><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">actions/checkout v5.0.0: Node 24 runtime and runner prerequisite</a></li>
+      <li><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">actions/checkout v7.0.1 release snapshot</a></li>
+      <li><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">actions/setup-node v5.0.0: Node 24 runtime and runner prerequisite</a></li>
+      <li><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">actions/setup-node v7.0.0 release snapshot</a></li>
+      <li><a href="https://docs.github.com/en/actions/how-tos/create-and-publish-actions/manage-custom-actions#using-release-management-for-actions">GitHub Docs: release management and immutable action refs</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Want this review for one workflow?</h2>
+      <p>The $49-equivalent-in-Bitcoin scope includes one workflow, one action-ref inventory, a reviewed minimal migration patch, runner or GHES compatibility notes, a compact verification report, and one in-scope revision. Scope and the exact BTC amount are confirmed in writing before payment; hosted success is not guaranteed.</p>
+      <a class="primary" href="../?request=node24#anonymous-intake">Open the preselected $49 Node 24 intake — no payment yet →</a>
+      <p class="fine">The link preselects “GitHub Actions Node 24 migration review” in the encrypted no-account intake. Add only sanitized evidence.</p>
+    </div>
+  </main>
+  <footer>CI Rescue synthetic Node 24 migration proof · Evidence snapshot July 22, 2026 · No client claim · No hosted-run guarantee · No security review</footer>
+</body>
+</html>

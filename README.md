@@ -90,6 +90,7 @@ These examples contain no client data and are not represented as paid-client res
 - [Fix `upload-artifact` “No files were found” warnings](https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html)
 - [Fix pytest exit code 5 when no tests are collected](https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html)
 - [Migrate GitHub Actions workflows to Node 24](https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html)
+- [Inspect the synthetic GitHub Actions Node 24 migration proof](https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration-proof.html)
 
 ## Support the free tools
 
