@@ -7,6 +7,9 @@
     <loc>https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html</loc>
   </url>
   <url>
+    <loc>https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html</loc>
+  </url>
+  <url>
     <loc>https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html</loc>
   </url>
   <url>
@@ -17,5 +20,8 @@
   </url>
   <url>
     <loc>https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html</loc>
+  </url>
+  <url>
+    <loc>https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html</loc>
   </url>
 </urlset>

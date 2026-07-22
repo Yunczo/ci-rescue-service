@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'unsafe-inline'; img-src 'self'; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <meta name="referrer" content="no-referrer">
+  <title>Free GitHub Actions Node 24 workflow checker — browser-only | CI Rescue</title>
+  <meta name="description" content="Check a GitHub.com Actions workflow for Node 24 migration review points entirely in your browser. Find old official action majors, temporary opt-outs, pinned refs, local actions, and self-hosted runner checks without uploading YAML.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html">
+  <meta property="og:title" content="Free GitHub Actions Node 24 workflow checker">
+  <meta property="og:description" content="A conservative browser-only migration review. No account, upload, tracking, or automatic YAML edits.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html">
+  <meta property="og:image" content="https://yunczo.github.io/ci-rescue-service/assets/ci-rescue-card.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "GitHub Actions Node 24 workflow checker",
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Any modern browser",
+    "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"},
+    "url": "https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html"
+  }
+  </script>
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --soft:rgba(24,27,31,.82); --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; --amber:#ffc56e; --blue:#9ac6ff; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); background:radial-gradient(circle at 9% 4%,rgba(40,129,84,.2),transparent 28rem),radial-gradient(circle at 92% 14%,rgba(164,107,32,.12),transparent 24rem),var(--bg); font:16px/1.65 system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    a { color:var(--green); }
+    code,textarea,button,.mono { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
+    header { border-bottom:1px solid var(--line); }
+    nav,main,footer { width:min(980px,calc(100% - 2rem)); margin:auto; }
+    nav { display:flex; justify-content:space-between; align-items:center; gap:1rem; padding:1rem 0; font:700 .86rem ui-monospace,monospace; }
+    nav a { color:var(--ink); text-decoration:none; }
+    nav span { color:var(--muted); }
+    main { padding:clamp(3rem,8vw,6.5rem) 0 5rem; }
+    .eyebrow { color:var(--green); font:700 .78rem ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { max-width:900px; margin:.8rem 0 1.2rem; font:800 clamp(2.5rem,7vw,5.3rem)/1.01 ui-monospace,monospace; letter-spacing:-.065em; }
+    h2 { margin:0 0 1rem; font:800 clamp(1.5rem,4vw,2.4rem)/1.15 ui-monospace,monospace; letter-spacing:-.04em; }
+    h3 { margin:.75rem 0 .45rem; font:800 1.15rem/1.3 ui-monospace,monospace; }
+    .lede { max-width:800px; color:#d4d2ca; font-size:1.15rem; }
+    .snapshot { margin:2rem 0; padding:1.1rem 1.25rem; border:1px solid var(--line); border-left:3px solid var(--amber); border-radius:.45rem; background:var(--panel); color:#d8d4c8; }
+    .snapshot strong { color:var(--amber); }
+    .privacy-proof { display:grid; grid-template-columns:repeat(3,1fr); gap:.8rem; margin:2rem 0; }
+    .privacy-proof div { padding:1rem; border:1px solid var(--line); border-radius:.55rem; background:var(--soft); }
+    .privacy-proof strong { display:block; margin-bottom:.25rem; font:800 .9rem ui-monospace,monospace; color:var(--green); }
+    .privacy-proof span { color:var(--muted); font-size:.88rem; }
+    form { margin-top:2.4rem; }
+    label { display:block; margin-bottom:.55rem; font:800 .9rem ui-monospace,monospace; }
+    textarea { display:block; width:100%; min-height:22rem; resize:vertical; padding:1rem; border:1px solid var(--line); border-radius:.65rem; background:#101317; color:#e9eee9; font-size:.86rem; line-height:1.55; }
+    textarea:focus { outline:2px solid var(--green); outline-offset:2px; }
+    textarea::placeholder { color:#777d80; }
+    .input-meta { display:flex; justify-content:space-between; gap:1rem; margin-top:.55rem; color:var(--muted); font-size:.78rem; }
+    .controls { display:flex; flex-wrap:wrap; gap:.65rem; margin:1rem 0 1.5rem; }
+    button { padding:.75rem 1rem; border:1px solid var(--line); border-radius:.45rem; background:transparent; color:var(--ink); font-size:.86rem; font-weight:800; cursor:pointer; }
+    button[type="submit"] { border-color:var(--green); background:var(--green); color:#07130c; }
+    button:hover { transform:translateY(-1px); }
+    button:focus-visible,a:focus-visible { outline:2px solid var(--green); outline-offset:2px; }
+    noscript { display:block; margin:1rem 0; padding:1rem; border:1px solid var(--amber); color:var(--amber); }
+    .status { min-height:3.25rem; padding:.9rem 1rem; border:1px solid var(--line); border-left:3px solid var(--line); border-radius:.4rem; background:var(--panel); color:var(--muted); }
+    .status[data-state="ready"] { border-left-color:var(--green); color:#d9f7e5; }
+    .status[data-state="warning"] { border-left-color:var(--amber); color:#f3d6a7; }
+    .results { display:grid; gap:.9rem; margin-top:1rem; }
+    .finding { padding:1.2rem; border:1px solid var(--line); border-radius:.6rem; background:var(--soft); }
+    .finding-warning { border-left:3px solid var(--amber); }
+    .finding-info { border-left:3px solid var(--blue); }
+    .finding-pass { border-left:3px solid var(--green); }
+    .finding-heading { display:flex; justify-content:space-between; flex-wrap:wrap; gap:.7rem; }
+    .finding-code { color:var(--muted); font:700 .72rem ui-monospace,monospace; text-transform:uppercase; letter-spacing:.06em; }
+    .action-ref { display:block; margin:.65rem 0; color:var(--green); overflow-wrap:anywhere; }
+    .finding p { margin:.45rem 0; color:#d4d2ca; }
+    .empty-result { margin:0; padding:1rem; border:1px solid var(--line); border-radius:.45rem; color:var(--muted); }
+    .method { margin-top:4rem; }
+    .method-grid,.next { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .method-grid article,.next article { padding:1.4rem; border:1px solid var(--line); border-radius:.65rem; background:var(--soft); }
+    .method-grid p,.next p { color:#c8c7c0; }
+    .next { margin-top:1rem; }
+    .next article:last-child { border-color:rgba(117,230,165,.35); background:#102d20; }
+    .primary { display:inline-block; padding:.72rem .9rem; border-radius:.42rem; background:var(--green); color:#07130c; font-weight:800; text-decoration:none; }
+    .sources { margin-top:3rem; color:var(--muted); font-size:.9rem; }
+    footer { padding:1.8rem 0 3rem; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem; }
+    @media(max-width:700px){ .privacy-proof,.method-grid,.next{grid-template-columns:1fr} nav span{display:none} h1{letter-spacing:-.055em} textarea{min-height:18rem} .input-meta{display:block} }
+  </style>
+</head>
+<body>
+  <header>
+    <nav aria-label="Tool navigation"><a href="../">← CI RESCUE</a><span>NODE 24 WORKFLOW CHECK</span></nav>
+  </header>
+  <main>
+    <div class="eyebrow">Free · browser-only · no account</div>
+    <h1>Review an Actions workflow for the Node 24 migration.</h1>
+    <p class="lede">Paste a <strong>sanitized GitHub.com</strong> workflow. The checker finds temporary Node 20 opt-outs, self-hosted runner review points, and action refs that need release-note or metadata inspection. It never uploads or rewrites your YAML.</p>
+
+    <div class="snapshot">
+      <strong>Reference snapshot: July 22, 2026.</strong> GitHub began making Node 24 the default on June 16, 2026 and plans to remove Node 20 from runners later in fall 2026. The verified Node 24 floors are <code>checkout@v5</code>, <code>setup-node@v5</code>, <code>setup-python@v6</code>, and <code>upload-artifact@v6</code>; latest v7 releases are recorded separately. This tool's artifact guidance is for GitHub.com. GitHub Enterprise Server has a separate official <code>upload-artifact@v3.2.2</code> Node 24 path.
+    </div>
+
+    <div class="privacy-proof" aria-label="Privacy properties">
+      <div><strong>No upload</strong><span>The checker has no network code, and the page policy blocks browser connection APIs.</span></div>
+      <div><strong>No persistence</strong><span>Workflow text is not written to cookies, browser storage, or a server.</span></div>
+      <div><strong>No mutation</strong><span>The result is a review checklist, not an automatic dependency rewrite.</span></div>
+    </div>
+
+    <form id="node24-form" autocomplete="off">
+      <label for="workflow-input">Sanitized workflow YAML</label>
+      <textarea id="workflow-input" name="workflow" required maxlength="300000" spellcheck="false" placeholder="name: CI&#10;on: [push]&#10;jobs:&#10;  test:&#10;    runs-on: ubuntu-latest&#10;    steps:&#10;      - uses: actions/checkout@v7&#10;      - uses: actions/setup-node@v7"></textarea>
+      <div class="input-meta">
+        <span id="workflow-counter">0 / 300,000 characters · 0 lines</span>
+        <span>Sanitize secrets, private URLs, and proprietary details first.</span>
+      </div>
+      <div class="controls">
+        <button type="submit">Check locally</button>
+        <button type="button" id="load-node24-sample">Load synthetic sample</button>
+        <button type="button" id="clear-workflow">Clear</button>
+      </div>
+    </form>
+
+    <noscript>JavaScript is required for local analysis. No workflow is sent anywhere when JavaScript is enabled.</noscript>
+    <div class="status" id="node24-status" data-state="idle" role="status" aria-live="polite">Nothing checked yet.</div>
+    <section class="results" id="node24-results" aria-label="Migration findings" hidden></section>
+
+    <section class="method" aria-labelledby="method-title">
+      <h2 id="method-title">What the result can—and cannot—tell you.</h2>
+      <div class="method-grid">
+        <article><h3>It can triage refs</h3><p>The tool parses ordinary and flow-style <code>uses:</code> entries, compares four GitHub-owned actions with dated Node 24 floors and latest-release snapshots, and identifies configuration that deserves immediate review.</p></article>
+        <article><h3>It cannot prove runtime compatibility</h3><p>A pinned SHA hides its release line from an offline parser, third-party metadata is outside this page, and successful hosted execution depends on the actual runner, inputs, permissions, and services.</p></article>
+      </div>
+    </section>
+
+    <div class="next" aria-label="Next steps">
+      <article>
+        <h2>Use the migration checklist.</h2>
+        <p>Map immutable SHAs to releases, review breaking changes, verify self-hosted OS and architecture, run the workflow, then remove any temporary Node 20 opt-out.</p>
+        <a href="../guides/github-actions-node24-migration.html">Read the source-backed guide →</a>
+      </article>
+      <article>
+        <h2>Need the patch?</h2>
+        <p>One failing workflow, one focused diagnosis, and one reviewable patch for $49 equivalent in Bitcoin. Scope and exact amount are confirmed in writing before payment.</p>
+        <a class="primary" href="../#anonymous-intake">Send for scope review — no payment yet →</a>
+      </article>
+    </div>
+
+    <section class="sources" aria-labelledby="source-title">
+      <h2 id="source-title">Primary references.</h2>
+      <ul>
+        <li><a href="https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/">GitHub Changelog: Deprecation of Node 20 on Actions runners</a></li>
+        <li><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">actions/checkout v5.0.0: Node 24 floor</a> · <a href="https://github.com/actions/checkout/releases/tag/v7.0.1">latest snapshot v7.0.1</a></li>
+        <li><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">actions/setup-node v5.0.0: Node 24 floor</a> · <a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">latest snapshot v7.0.0</a></li>
+        <li><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">actions/setup-python v6.0.0: Node 24 floor</a> · <a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">latest snapshot v7.0.0</a></li>
+        <li><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">actions/upload-artifact v6.0.0: Node 24 floor</a> · <a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">latest snapshot v7.0.1</a></li>
+        <li><a href="https://github.com/actions/upload-artifact#ghes-support">Official upload-artifact GHES support matrix</a></li>
+      </ul>
+    </section>
+  </main>
+  <footer>CI Rescue Node 24 checker · GitHub.com workflow scope · Conservative static analysis, not a hosted-run guarantee · No security review</footer>
+  <script type="module" src="../assets/node24-checker.js"></script>
+</body>
+</html>

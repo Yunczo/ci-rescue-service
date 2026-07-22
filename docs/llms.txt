@@ -33,12 +33,14 @@ The examples are synthetic and are not represented as paid-client results.
 - package-lock lookup in monorepos: https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html
 - upload-artifact missing files: https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html
 - pytest exit code 5 / no tests collected: https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html
+- GitHub Actions Node 24 migration checklist: https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html
 
 ## Free browser tool
 
 - Local GitHub Actions log triage: https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html
+- Local GitHub Actions Node 24 workflow checker: https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html
 
-The analyzer matches focused failure signatures entirely in the browser. Its Content Security Policy blocks browser connection APIs, it has no tracking or persistence code, and result evidence contains line numbers rather than raw log text. Users must still sanitize inputs because browser extensions and the user's device are outside the page boundary.
+Both browser tools analyze sanitized input locally. Their Content Security Policies block browser connection APIs, and they contain no tracking or persistence code. The log analyzer reports line numbers rather than raw log text. The GitHub.com Node 24 checker uses dated Node 24 release floors and latest-release snapshots, and routes pinned SHAs, local or third-party actions, and ambiguous refs to manual review rather than guessing. The guide documents the separate GitHub Enterprise Server artifact path. Users must still sanitize inputs because browser extensions and the user's device are outside the page boundary.
 
 ## Payment boundaries
 

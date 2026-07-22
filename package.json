@@ -5,7 +5,8 @@
   "scripts": {
     "build:intake": "esbuild src/nostr-intake.js --bundle --format=iife --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/nostr-intake.js",
     "build:triage": "esbuild src/log-triage.js --bundle --format=esm --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/log-triage.js",
-    "build:site": "npm run build:intake && npm run build:triage",
+    "build:node24": "esbuild src/node24-checker.js --bundle --format=esm --platform=browser --target=es2022 --minify --legal-comments=none --outfile=docs/assets/node24-checker.js",
+    "build:site": "npm run build:intake && npm run build:triage && npm run build:node24",
     "test": "node --test tests/*.test.js"
   },
   "dependencies": {

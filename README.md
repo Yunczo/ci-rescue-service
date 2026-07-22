@@ -9,6 +9,10 @@ One failing GitHub Actions workflow, one focused diagnosis, and one reviewable p
 
 Paste a sanitized GitHub Actions excerpt into the [local log triage tool](https://yunczo.github.io/ci-rescue-service/tools/github-actions-log-triage.html). It matches focused failure signatures in the browser, makes no analyzer network request, stores nothing, and reports line numbers without reproducing raw log text. Sanitize first: browser extensions and the local device remain outside the page boundary.
 
+## Check a workflow for the Node 24 migration
+
+Paste sanitized GitHub.com workflow YAML into the [browser-only Node 24 workflow checker](https://yunczo.github.io/ci-rescue-service/tools/github-actions-node24-checker.html). It identifies temporary Node 20 opt-outs, self-hosted runner review points, and action refs that need release-note or metadata inspection. The checker has no network or storage code and never rewrites YAML. Its official-action snapshot is dated July 22, 2026; Node 24 release floors are tracked separately from latest releases, while pinned SHAs, local or third-party actions, and ambiguous refs are routed to manual review rather than guessed. The linked guide documents the separate GitHub Enterprise Server artifact path.
+
 ## Run the free diagnostic Action
 
 Add the offline, read-only analyzer to a workflow after checkout:
@@ -85,6 +89,7 @@ These examples contain no client data and are not represented as paid-client res
 - [Fix `package-lock.json` lookup in a monorepo workflow](https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html)
 - [Fix `upload-artifact` “No files were found” warnings](https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html)
 - [Fix pytest exit code 5 when no tests are collected](https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html)
+- [Migrate GitHub Actions workflows to Node 24](https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html)
 
 ## Support the free tools
 

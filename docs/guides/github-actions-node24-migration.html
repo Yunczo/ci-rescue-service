@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A conservative July 2026 checklist for migrating GitHub Actions workflows from the Node 20 runner transition to Node 24 without blind action-version replacements.">
+  <meta name="robots" content="index,follow">
+  <title>GitHub Actions Node 24 migration checklist (2026) | CI Rescue</title>
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html">
+  <meta property="og:title" content="GitHub Actions Node 24 migration checklist">
+  <meta property="og:description" content="Inventory action refs, map SHAs, review major changes, verify self-hosted runners, test, and remove the temporary Node 20 opt-out.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/github-actions-node24-migration.html">
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; --amber:#ffc56e; }
+    * { box-sizing:border-box; }
+    body { margin:0; background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),var(--bg); color:var(--ink); font:17px/1.72 system-ui,-apple-system,sans-serif; }
+    a { color:var(--green); }
+    code,pre,.mono { font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace; }
+    header { border-bottom:1px solid var(--line); }
+    nav,main,footer { width:min(840px,calc(100% - 2rem)); margin:auto; }
+    nav { display:flex; justify-content:space-between; gap:1rem; padding:1rem 0; font:700 .86rem ui-monospace,monospace; }
+    nav a { color:var(--ink); text-decoration:none; }
+    main { padding:clamp(3.5rem,9vw,7rem) 0 5rem; }
+    .eyebrow { color:var(--green); font:700 .78rem ui-monospace,monospace; letter-spacing:.12em; text-transform:uppercase; }
+    h1 { max-width:820px; margin:.8rem 0 1.2rem; font:800 clamp(2.4rem,7vw,5rem)/1.02 ui-monospace,monospace; letter-spacing:-.065em; }
+    h2 { margin:3.5rem 0 1rem; font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace; letter-spacing:-.04em; }
+    h3 { margin:2rem 0 .6rem; }
+    .lede { max-width:790px; color:#d4d2ca; font-size:1.18rem; }
+    .summary,.boundary { margin:2rem 0; padding:1.25rem 1.4rem; border:1px solid var(--line); border-left:3px solid var(--green); border-radius:.4rem; background:var(--panel); }
+    .summary p,.boundary p { margin:.3rem 0; }
+    .timeline { display:grid; gap:.85rem; margin:1.4rem 0; }
+    .timeline div { padding:1rem 1.2rem; border:1px solid var(--line); border-radius:.45rem; background:var(--panel); }
+    .timeline strong { display:block; color:var(--amber); font-family:ui-monospace,monospace; }
+    table { width:100%; border-collapse:collapse; margin:1.4rem 0; font-size:.94rem; }
+    th,td { padding:.85rem; border:1px solid var(--line); text-align:left; vertical-align:top; }
+    th { background:var(--panel); font-family:ui-monospace,monospace; }
+    td:first-child { color:var(--amber); }
+    pre { overflow:auto; padding:1.2rem; border:1px solid var(--line); border-radius:.55rem; background:#111419; color:#d9f7e5; font-size:.88rem; line-height:1.55; }
+    li+li { margin-top:.55rem; }
+    .dont,.sources { color:var(--muted); }
+    .tool { margin:2rem 0; padding:1.4rem; border:1px solid rgba(117,230,165,.3); border-radius:.65rem; background:#102d20; }
+    .tool a,.cta a.primary { display:inline-block; margin-top:.6rem; padding:.75rem 1rem; border-radius:.45rem; background:var(--green); color:#07130c; font-weight:800; text-decoration:none; }
+    .cta { margin-top:4rem; padding:1.7rem; border:1px solid rgba(117,230,165,.3); border-radius:.75rem; background:#102d20; }
+    .sources { font-size:.9rem; }
+    footer { padding:1.8rem 0 3rem; border-top:1px solid var(--line); color:var(--muted); font-size:.82rem; }
+    @media(max-width:650px){ table,thead,tbody,tr,th,td{display:block} thead{display:none} tr{margin:0 0 1rem} td:first-child{background:var(--panel);font-weight:700} }
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Guide navigation"><a href="../">← CI RESCUE</a><span>FIELD GUIDE 05</span></nav></header>
+  <main>
+    <div class="eyebrow">GitHub Actions · July 2026</div>
+    <h1>Migrate Actions workflows to Node 24 without blind version bumps.</h1>
+    <p class="lede">GitHub began using Node 24 by default on Actions runners on June 16, 2026. For workflows on GitHub.com, the safe response is a small dependency migration: inventory every action ref, read release metadata, preserve inputs and permissions, verify the actual runner, and test the real workflow. GitHub Enterprise Server artifact handling is called out separately below.</p>
+
+    <div class="summary">
+      <p><strong>Short version:</strong> do not search-and-replace every <code>@v4</code> with <code>@v7</code>. A major action upgrade can change behavior. Map the ref to official releases, review every intervening major, patch deliberately, run the workflow, then remove any temporary Node 20 opt-out.</p>
+    </div>
+
+    <h2>The dates and compatibility boundary.</h2>
+    <div class="timeline">
+      <div><strong>April 2026</strong>Node 20 reached end of life.</div>
+      <div><strong>June 16, 2026</strong>GitHub says runners began using Node 24 by default.</div>
+      <div><strong>Fall 2026</strong>GitHub plans to remove Node 20 from the runner. The temporary <code>ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION=true</code> opt-out stops working after that removal.</div>
+    </div>
+    <p>Node 24 is incompatible with macOS 13.4 or earlier and lacks official ARM32 support. The verified Node 24 releases below require Actions Runner v2.327.1 or later. Those constraints matter most for self-hosted runners, where the repository owner controls the runner version, host OS, and architecture.</p>
+
+    <div class="tool">
+      <h2>Start with a local inventory.</h2>
+      <p>Paste sanitized GitHub.com workflow YAML into the browser-only checker. It tracks four verified GitHub-owned Node 24 release floors separately from the latest v7 snapshot and sends pinned SHAs, local or third-party actions, and ambiguous refs to manual review. It neither uploads nor edits the workflow.</p>
+      <a href="../tools/github-actions-node24-checker.html">Check a workflow locally →</a>
+    </div>
+
+    <h2>A reviewable migration sequence.</h2>
+    <ol>
+      <li><strong>Inventory every <code>uses:</code> ref.</strong> Include reusable workflows and composite/local actions referenced by the job.</li>
+      <li><strong>Resolve the real version.</strong> For a full commit SHA, map it to an official tag or inspect that commit's <code>action.yml</code>. Immutability is valuable, but a SHA alone does not reveal the bundled JavaScript runtime.</li>
+      <li><strong>Read intervening release notes.</strong> Major upgrades can alter inputs, outputs, defaults, prerequisites, or artifact behavior. Preserve only the permissions and inputs the workflow still needs.</li>
+      <li><strong>Verify the runner.</strong> Use Actions Runner v2.327.1 or later, update self-hosted runner software through its documented process, check OS and architecture compatibility, and inspect labels that may route jobs to older hosts.</li>
+      <li><strong>Patch one dependency group at a time.</strong> Keep the diff small enough to attribute a failure to a specific action or runner change.</li>
+      <li><strong>Run the real job path.</strong> Static checks cannot reproduce credentials, service containers, matrices, caches, artifacts, or third-party availability.</li>
+      <li><strong>Remove the Node 20 opt-out.</strong> Treat <code>ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION</code> as a short-lived rollback aid, never as the completed migration.</li>
+    </ol>
+
+    <h2>Verified Node 24 floors and latest snapshot.</h2>
+    <p>As of July 22, 2026, these are the GitHub.com release lines used by this guide and checker. An action at or above the verified Node 24 floor does not need a latest-major upgrade solely for this runtime migration. Re-check official releases when applying the guide later.</p>
+    <table>
+      <thead><tr><th>Action</th><th>Node 24 floor</th><th>Latest snapshot</th><th>Migration handling</th></tr></thead>
+      <tbody>
+        <tr><td><code>actions/checkout</code></td><td><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">v5.0.0</a></td><td><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">v7.0.1</a></td><td>Review repository checkout assumptions before any major upgrade.</td></tr>
+        <tr><td><code>actions/setup-node</code></td><td><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">v5.0.0</a></td><td><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">v7.0.0</a></td><td>Preserve Node selection, registry, mirror, and cache inputs intentionally.</td></tr>
+        <tr><td><code>actions/setup-python</code></td><td><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">v6.0.0</a></td><td><a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">v7.0.0</a></td><td>Review runtime/tool-cache prerequisites and Python selection.</td></tr>
+        <tr><td><code>actions/upload-artifact</code></td><td><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">v6.0.0</a></td><td><a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">v7.0.1</a></td><td>GitHub.com only; review artifact naming, path, retention, overwrite, and hidden-file behavior.</td></tr>
+      </tbody>
+    </table>
+
+    <h2>GitHub Enterprise Server needs a separate artifact path.</h2>
+    <p>The official <code>upload-artifact</code> support matrix says v4 and later are not supported on GitHub Enterprise Server. For GHES, it directs Node 24 users to <a href="https://github.com/actions/upload-artifact/releases/tag/v3.2.2"><code>actions/upload-artifact@v3.2.2</code></a>. Do not copy the GitHub.com v6/v7 artifact example into GHES. Verify the support matrix for the installed GHES release and every other action independently.</p>
+
+    <h2>GitHub.com example target, not a universal patch.</h2>
+    <pre><code>steps:
+  - uses: actions/checkout@v7
+  - uses: actions/setup-node@v7
+    with:
+      node-version-file: .nvmrc
+      cache: npm
+  - run: npm ci
+  - run: npm test
+  - uses: actions/upload-artifact@v7
+    if: always()
+    with:
+      name: test-results
+      path: test-results/</code></pre>
+    <p>Use a full reviewed commit SHA instead of a moving major tag when your dependency policy requires immutable refs. The correct SHA must come from the intended official release; this guide deliberately does not publish a copied SHA that could become stale or be pasted into the wrong action.</p>
+
+    <h2>Three risky shortcuts.</h2>
+    <ul class="dont">
+      <li><strong>Blind global replacement.</strong> The same old major number can refer to unrelated actions with different current releases and breaking changes.</li>
+      <li><strong>Assuming a pinned SHA is compatible.</strong> A SHA fixes content; it does not tell you whether that content declares <code>node20</code>, <code>node24</code>, a Docker runtime, or a composite action.</li>
+      <li><strong>Keeping the insecure-version opt-out.</strong> GitHub explicitly says it is temporary and ends when the runner removes Node 20.</li>
+    </ul>
+
+    <div class="boundary">
+      <p><strong>Boundary:</strong> a current action ref and compatible runner are prerequisites, not proof that the job will pass. Run the exact matrix and inspect its first actionable failure. Do not share secrets, credentials, private logs, proprietary source, or production details in public intake.</p>
+    </div>
+
+    <h2>Primary references.</h2>
+    <ul class="sources">
+      <li><a href="https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/">GitHub Changelog: Deprecation of Node 20 on GitHub Actions runners</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepsuses">GitHub Docs: workflow syntax for <code>steps[*].uses</code></a></li>
+      <li><a href="https://docs.github.com/en/actions/how-tos/create-and-publish-actions/manage-custom-actions#using-release-management-for-actions">GitHub Docs: release management for actions</a></li>
+      <li><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">Official checkout v5.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">Official setup-node v5.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">Official setup-python v6.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">Official upload-artifact v6.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">Official checkout v7.0.1 release</a></li>
+      <li><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">Official setup-node v7.0.0 release</a></li>
+      <li><a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">Official setup-python v7.0.0 release</a></li>
+      <li><a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">Official upload-artifact v7.0.1 release</a></li>
+      <li><a href="https://github.com/actions/upload-artifact#ghes-support">Official upload-artifact GHES support matrix</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Still stuck on one workflow?</h2>
+      <p>CI Rescue provides a focused diagnosis, reviewable patch, and verification report for one failing GitHub Actions job path. Scope and the exact Bitcoin amount are confirmed in writing before payment; no credentials or production access are accepted.</p>
+      <a class="primary" href="https://github.com/Yunczo/ci-rescue-service/issues/new?template=service-request.yml">Request a $49 rescue →</a>
+    </div>
+  </main>
+  <footer>CI Rescue field guide · GitHub.com scope with a separate GHES artifact note · Snapshot dated July 22, 2026 · No security review · No invented client claims</footer>
+</body>
+</html>
