@@ -101,7 +101,10 @@ test("intake markup and source keep ticket status while adding local accessible 
   );
   assert.match(home, /id="anonymous-intake-status" role="status" aria-live="polite"/);
   assert.match(source, /updateIntakeStatus\(status, submissionStatus, message, state, options\)/);
-  assert.match(source, /!form\.checkValidity\(\)/);
+  assert.match(
+    source,
+    /if \(!form\.checkValidity\(\)\) \{\s*form\.reportValidity\(\);\s*return;/,
+  );
   assert.equal(source.match(/focusSubmission: true/g)?.length, 3);
   assert.match(source, /useSubmission: true/);
   assert.doesNotMatch(source, /mirrorSubmission/);

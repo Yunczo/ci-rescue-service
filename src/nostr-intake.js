@@ -157,12 +157,12 @@ form.addEventListener("submit", async (event) => {
     details: String(formData.get("details") || "").trim(),
   };
 
-  if (
-    !form.checkValidity() ||
-    !payload.summary ||
-    !payload.details ||
-    !formData.get("sanitized")
-  ) {
+  if (!form.checkValidity()) {
+    form.reportValidity();
+    return;
+  }
+
+  if (!payload.summary || !payload.details || !formData.get("sanitized")) {
     setStatus(
       "Complete the required fields and confirm the evidence is sanitized.",
       "error",
