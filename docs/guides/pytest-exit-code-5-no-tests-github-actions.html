@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fix pytest exit code 5 in GitHub Actions | CI Rescue</title>
+  <meta name="description" content="Fix pytest 'no tests ran' and exit code 5 in GitHub Actions by checking the runner directory, collection root, naming conventions, and selection filters.">
+  <meta name="robots" content="index,follow">
+  <link rel="canonical" href="https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html">
+  <meta property="og:title" content="Fix pytest exit code 5: no tests collected in GitHub Actions">
+  <meta property="og:description" content="Prove what pytest can collect before suppressing a CI failure.">
+  <meta property="og:type" content="article">
+  <meta property="og:url" content="https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html">
+  <style>
+    :root { color-scheme:dark; --bg:#0d0f11; --panel:#171a1e; --ink:#f7f4ea; --muted:#aaa9a2; --line:#30343a; --green:#75e6a5; }
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 8% 2%,rgba(40,129,84,.18),transparent 28rem),var(--bg);color:var(--ink);font:17px/1.72 system-ui,-apple-system,sans-serif} a{color:var(--green)} code,pre,.mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace} header{border-bottom:1px solid var(--line)} nav,main,footer{width:min(840px,calc(100% - 2rem));margin:auto} nav{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;font:700 .86rem ui-monospace,monospace} nav a{color:var(--ink);text-decoration:none} main{padding:clamp(3.5rem,9vw,7rem) 0 5rem}.eyebrow{color:var(--green);font:700 .78rem ui-monospace,monospace;letter-spacing:.12em;text-transform:uppercase}h1{max-width:800px;margin:.8rem 0 1.2rem;font:800 clamp(2.4rem,7vw,5rem)/1.02 ui-monospace,monospace;letter-spacing:-.065em}h2{margin:3.5rem 0 1rem;font:800 clamp(1.55rem,4vw,2.4rem)/1.15 ui-monospace,monospace;letter-spacing:-.04em}.lede{max-width:760px;color:#d4d2ca;font-size:1.18rem}.summary,.boundary{margin:2rem 0;padding:1.25rem 1.4rem;border:1px solid var(--line);border-left:3px solid var(--green);border-radius:.4rem;background:var(--panel)}.summary p,.boundary p{margin:.3rem 0}pre{overflow:auto;padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:#111419;color:#d9f7e5;font-size:.88rem;line-height:1.55}li+li{margin-top:.55rem}.dont,.sources{color:var(--muted)}.sources{font-size:.9rem}.split{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1.5rem 0}.split article{padding:1.2rem;border:1px solid var(--line);border-radius:.55rem;background:var(--panel)}.split h3{margin-top:0;font-family:ui-monospace,monospace}.cta{margin-top:4rem;padding:1.7rem;border:1px solid rgba(117,230,165,.3);border-radius:.75rem;background:#102d20}.cta a.primary{display:inline-block;margin:.6rem .55rem 0 0;padding:.75rem 1rem;border-radius:.45rem;background:var(--green);color:#07130c;font-weight:800;text-decoration:none}footer{padding:1.8rem 0 3rem;border-top:1px solid var(--line);color:var(--muted);font-size:.82rem}@media(max-width:650px){.split{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header><nav aria-label="Guide navigation"><a href="../">← CI RESCUE</a><span>FIELD GUIDE 04</span></nav></header>
+  <main>
+    <div class="eyebrow">GitHub Actions · pytest</div>
+    <h1>When pytest exits 5 with no tests collected.</h1>
+    <p class="lede">Exit code 5 does not mean a test assertion failed. It means pytest collected no tests. In CI, start with the runner's actual directory and collection rules instead of turning the exit code into success.</p>
+    <pre><code>============================ no tests ran ============================
+Error: Process completed with exit code 5.</code></pre>
+
+    <div class="summary"><p><strong>Short version:</strong> run <code>python -m pytest --collect-only</code> against the intended test directory, confirm the pytest command runs from the intended package directory, then fix the path, naming convention, or selection filter that removed every test.</p></div>
+
+    <h2>Collection starts from a real directory.</h2>
+    <div class="split">
+      <article><h3>Repository root</h3><p>Without an explicit argument, pytest starts from configured <code>testpaths</code> or the current directory. That may be correct in a single-package repository.</p></article>
+      <article><h3>Monorepo package</h3><p>A service under <code>services/api</code> usually needs an explicit test path or a run-step <code>working-directory</code>. Checkout does not choose the package for later commands.</p></article>
+    </div>
+
+    <h2>A job that makes collection explicit.</h2>
+    <pre><code>jobs:
+  test-api:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: services/api
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+          cache: pip
+          cache-dependency-path: services/api/requirements.txt
+      - run: python -m pip install -r requirements.txt
+      - name: Show collected tests
+        run: python -m pytest --collect-only -q tests
+      - name: Run tests
+        run: python -m pytest -q tests</code></pre>
+    <p>The working directory applies to each <code>run</code> step. The setup action still receives a repository-relative dependency path. The temporary collection step makes a zero-test boundary visible before the full test command.</p>
+
+    <h2>Check these in order.</h2>
+    <ol>
+      <li>Print the intended package directory and verify the test tree was checked out at the expected case-sensitive path.</li>
+      <li>Run <code>python -m pytest --collect-only -q tests</code> from the same directory and with the same configuration as CI.</li>
+      <li>Check <code>testpaths</code>, <code>norecursedirs</code>, and custom <code>python_files</code>, <code>python_classes</code>, or <code>python_functions</code> settings.</li>
+      <li>Under pytest's defaults, use <code>test_*.py</code> or <code>*_test.py</code> modules, <code>test</code>-prefixed functions, and <code>Test</code>-prefixed classes without an <code>__init__</code> method.</li>
+      <li>Remove <code>-k</code>, marker, node-id, or path filters temporarily and confirm they did not select an empty set.</li>
+    </ol>
+
+    <h2>Three tempting non-fixes.</h2>
+    <ul class="dont">
+      <li><strong>Appending <code>|| true</code>.</strong> That can hide assertion failures, collection errors, and usage errors as well as the zero-test case.</li>
+      <li><strong>Changing every file name.</strong> First identify whether the path, configuration root, or an intentional custom naming rule is actually wrong.</li>
+      <li><strong>Globally converting exit code 5 to success.</strong> An optional empty suite can be a valid project policy, but encode that narrowly and only after proving the empty selection is intentional.</li>
+    </ul>
+
+    <div class="boundary"><p><strong>Boundary:</strong> successful collection proves pytest found test items. It does not prove those tests exercise the intended package, use the expected installed code, or will pass.</p></div>
+
+    <h2>Primary references.</h2>
+    <ul class="sources">
+      <li><a href="https://docs.pytest.org/en/stable/reference/exit-codes.html">pytest: exit codes</a></li>
+      <li><a href="https://docs.pytest.org/en/stable/explanation/goodpractices.html#conventions-for-python-test-discovery">pytest: test discovery conventions</a></li>
+      <li><a href="https://docs.pytest.org/en/stable/how-to/usage.html">pytest: invocation and selection</a></li>
+      <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepsworking-directory">GitHub Docs: run-step working-directory</a></li>
+    </ul>
+
+    <div class="cta">
+      <h2>Diagnose before you buy.</h2>
+      <p>Run the free offline CI Rescue Action against one workflow and an optional sanitized log. If the report still leaves the hosted failure unresolved, request a focused diagnosis, reviewable patch, and verification report for one failing job path.</p>
+      <a class="primary" href="https://github.com/Yunczo/ci-rescue-service#run-the-free-diagnostic-action">Run the free diagnostic →</a>
+      <a class="primary" href="../#anonymous-intake">Request a $49 rescue →</a>
+    </div>
+  </main>
+  <footer>CI Rescue field guide · No security review · No invented client claims</footer>
+</body>
+</html>

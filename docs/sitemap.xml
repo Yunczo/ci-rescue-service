@@ -12,4 +12,7 @@
   <url>
     <loc>https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html</loc>
   </url>
+  <url>
+    <loc>https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html</loc>
+  </url>
 </urlset>

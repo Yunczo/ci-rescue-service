@@ -78,6 +78,7 @@ These examples contain no client data and are not represented as paid-client res
 - [Fix `npm ci` lockfile errors in GitHub Actions](https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html)
 - [Fix `package-lock.json` lookup in a monorepo workflow](https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html)
 - [Fix `upload-artifact` “No files were found” warnings](https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html)
+- [Fix pytest exit code 5 when no tests are collected](https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html)
 
 ## Support the free toolkit
 

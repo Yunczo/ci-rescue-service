@@ -32,6 +32,7 @@ The examples are synthetic and are not represented as paid-client results.
 - npm ci lockfile errors: https://yunczo.github.io/ci-rescue-service/guides/npm-ci-lockfile-github-actions.html
 - package-lock lookup in monorepos: https://yunczo.github.io/ci-rescue-service/guides/package-lock-monorepo-github-actions.html
 - upload-artifact missing files: https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html
+- pytest exit code 5 / no tests collected: https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html
 
 ## Payment boundaries
 
