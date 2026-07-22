@@ -12,6 +12,7 @@ test("public diagnoses are inspectable and cannot be mistaken for client proof",
     "5041445939",
     "5041263313",
     "5047406455",
+    "5048121313",
   ]) {
     assert.match(html, new RegExp(`issuecomment-${commentId}`));
   }
