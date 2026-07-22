@@ -10,7 +10,7 @@ The landing page offers a no-account request channel for buyers who do not want 
 
 ## Transport
 
-The page generates a random ticket key in browser storage, encrypts the request to the service public key using NIP-17 gift-wrapped direct messages, and publishes the same signed event to several independent public Nostr relays. Replies are accepted by the page only when the decrypted sender public key exactly matches the service public key above.
+The page generates a random ticket key in browser storage, encrypts the request to the service public key using NIP-17 gift-wrapped direct messages, and publishes the same signed event to several independent public Nostr relays. Before a reply is attributed to the service key, the page verifies the gift-wrap and seal signatures, their event IDs and required kinds, the intended-recipient tags, the rumor ID, and that the seal signer is the rumor author. The authenticated author must then exactly match the service public key above.
 
 This design removes login and email requirements. It does not make transport metadata private, guarantee relay availability, recover a cleared browser key, or make sensitive material appropriate to send. Buyers must not submit secrets, tokens, private URLs, personal data, proprietary source, production logs, or credentials.
 

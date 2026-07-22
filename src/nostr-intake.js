@@ -6,6 +6,7 @@ import {
   nip19,
 } from "nostr-tools";
 import { bytesToHex, hexToBytes } from "nostr-tools/utils";
+import { unwrapAuthenticatedNip17 } from "./nip17-auth.js";
 
 const SERVICE_PUBLIC_KEY =
   "350390e2ddcb4d14a0802cff6c1ce47868871d6719cff65d4ecf9eca1bc276a3";
@@ -85,7 +86,7 @@ async function loadReplies() {
 
     for (const wrap of wraps) {
       try {
-        const rumor = nip17.unwrapEvent(wrap, ticketSecretKey);
+        const rumor = unwrapAuthenticatedNip17(wrap, ticketSecretKey);
         if (rumor.pubkey !== SERVICE_PUBLIC_KEY) continue;
         replies.push({ createdAt: rumor.created_at, content: rumor.content });
       } catch {
