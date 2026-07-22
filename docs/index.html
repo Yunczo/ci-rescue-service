@@ -113,6 +113,10 @@
     .intake-panel { padding: 1.5rem; border: 1px solid var(--line); border-radius: .8rem; background: var(--panel); }
     .intake-panel h3 { margin-top: 0; }
     .intake-panel p { color: var(--muted); }
+    .intake-preset { margin: 1rem 0; padding: 1rem; border: 1px solid rgba(117, 230, 165, .35); border-left: 3px solid var(--green); border-radius: .55rem; background: rgba(16, 45, 32, .72); }
+    .intake-preset[hidden] { display: none; }
+    .intake-preset strong { display: block; margin-bottom: .45rem; color: var(--green); }
+    .intake-preset p { margin: .45rem 0 0; color: #d4d2ca; font-size: .88rem; }
     .intake-form { display: grid; gap: 1rem; }
     .intake-form label { display: grid; gap: .45rem; color: #d4d2ca; font-size: .9rem; }
     .intake-form input, .intake-form textarea {
@@ -132,6 +136,11 @@
     .intake-status { min-height: 3.2rem; padding: .8rem; border-left: 3px solid var(--line); background: rgba(0, 0, 0, .18); color: var(--muted); }
     .intake-status[data-state="success"] { border-color: var(--green); color: #c9ded1; }
     .intake-status[data-state="error"] { border-color: var(--amber); color: #f3d6a7; }
+    .intake-submit-status { padding: .8rem; border-left: 3px solid var(--line); background: rgba(0, 0, 0, .18); color: var(--muted); }
+    .intake-submit-status[hidden] { display: none; }
+    .intake-submit-status[data-state="success"] { border-color: var(--green); color: #c9ded1; }
+    .intake-submit-status[data-state="error"] { border-color: var(--amber); color: #f3d6a7; }
+    .intake-submit-status:focus { outline: 2px solid var(--green); outline-offset: 2px; }
     .intake-response { white-space: pre-wrap; overflow-wrap: anywhere; padding: 1rem; border: 1px solid rgba(117, 230, 165, .25); border-radius: .45rem; background: rgba(0, 0, 0, .22); color: #dcece2; }
 
     .payment { padding: 2rem; border: 1px solid rgba(117, 230, 165, .3); background: var(--green-dark); border-radius: 1rem; }
@@ -281,7 +290,12 @@
         <div class="intake-panel">
           <h3>Send a sanitized request</h3>
           <p>This page creates a random ticket key in your browser and encrypts the request to the CI Rescue service key before publishing it through independent Nostr relays. Relay metadata is public; do not send secrets, private source, credentials, or personal data.</p>
-          <form class="intake-form" id="anonymous-intake-form">
+          <div class="intake-preset" id="node24-intake-summary" hidden>
+            <strong>Node 24 review selected.</strong>
+            <p>US$49 equivalent in Bitcoin · one GitHub Actions workflow · one defined Node 24 migration goal · one focused patch or unified diff · a short root-cause and verification report · one revision addressing the accepted goal.</p>
+            <p>A scope response is normally posted within 24 hours. Default delivery is within 48 hours after confirmed payment and receipt of the required sanitized inputs. The exact BTC amount, payment address, quote expiry, and delivery window are confirmed in writing before payment. Hosted-run success is not guaranteed.</p>
+          </div>
+          <form class="intake-form" id="anonymous-intake-form" novalidate>
             <label>
               Failure or migration summary
               <input name="summary" required maxlength="180" placeholder="Example: Node 24 warning or first failing job path">
@@ -299,6 +313,7 @@
               <span>I removed secrets, tokens, private URLs, personal data, proprietary source, and production details.</span>
             </label>
             <button type="submit">Send for scope review — no payment yet</button>
+            <div class="intake-submit-status" id="anonymous-intake-submit-status" role="status" aria-live="polite" aria-atomic="true" tabindex="-1" hidden></div>
           </form>
         </div>
         <aside class="intake-panel" aria-label="Anonymous ticket inbox">

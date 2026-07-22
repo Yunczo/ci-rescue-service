@@ -6,6 +6,7 @@ import {
   nip19,
 } from "nostr-tools";
 import { bytesToHex, hexToBytes } from "nostr-tools/utils";
+import { updateIntakeStatus } from "./intake-status.js";
 import { unwrapAuthenticatedNip17 } from "./nip17-auth.js";
 
 const SERVICE_PUBLIC_KEY =
@@ -21,11 +22,21 @@ const SENT_AT_KEY = "ci-rescue-anonymous-ticket-sent-at-v1";
 
 const form = document.querySelector("#anonymous-intake-form");
 const status = document.querySelector("#anonymous-intake-status");
+const submissionStatus = document.querySelector("#anonymous-intake-submit-status");
+const node24OfferSummary = document.querySelector("#node24-intake-summary");
 const ticket = document.querySelector("#anonymous-ticket-id");
 const responseBox = document.querySelector("#anonymous-intake-response");
 const refreshButton = document.querySelector("#anonymous-intake-refresh");
 
-if (!form || !status || !ticket || !responseBox || !refreshButton) {
+if (
+  !form ||
+  !status ||
+  !submissionStatus ||
+  !node24OfferSummary ||
+  !ticket ||
+  !responseBox ||
+  !refreshButton
+) {
   throw new Error("Anonymous intake markup is incomplete");
 }
 
@@ -45,15 +56,15 @@ ticket.textContent = ticketNpub;
 
 const requestType = new URLSearchParams(window.location.search).get("request");
 if (requestType === "node24") {
+  node24OfferSummary.hidden = false;
   const summaryInput = form.elements.namedItem("summary");
   if (summaryInput instanceof HTMLInputElement && !summaryInput.value) {
     summaryInput.value = "GitHub Actions Node 24 migration review";
   }
 }
 
-function setStatus(message, state = "neutral") {
-  status.textContent = message;
-  status.dataset.state = state;
+function setStatus(message, state = "neutral", options = {}) {
+  updateIntakeStatus(status, submissionStatus, message, state, options);
 }
 
 function acceptedRelayCount(results) {
@@ -146,13 +157,26 @@ form.addEventListener("submit", async (event) => {
     details: String(formData.get("details") || "").trim(),
   };
 
-  if (!payload.summary || !payload.details || !formData.get("sanitized")) {
-    setStatus("Complete the required fields and confirm the evidence is sanitized.", "error");
+  if (
+    !form.checkValidity() ||
+    !payload.summary ||
+    !payload.details ||
+    !formData.get("sanitized")
+  ) {
+    setStatus(
+      "Complete the required fields and confirm the evidence is sanitized.",
+      "error",
+      { useSubmission: true, focusSubmission: true },
+    );
     return;
   }
 
   submitButton.disabled = true;
-  setStatus("Encrypting and publishing the request to independent relays…");
+  setStatus(
+    "Encrypting and publishing the request to independent relays…",
+    "neutral",
+    { useSubmission: true },
+  );
 
   try {
     const wrapped = nip17.wrapEvent(
@@ -170,9 +194,14 @@ form.addEventListener("submit", async (event) => {
     setStatus(
       `Encrypted request sent through ${accepted} relay${accepted === 1 ? "" : "s"}. Keep this browser storage and check for a reply within 24 hours.`,
       "success",
+      { useSubmission: true, focusSubmission: true },
     );
   } catch {
-    setStatus("The request was not accepted by a relay. Nothing was charged; try again later.", "error");
+    setStatus(
+      "The request was not accepted by a relay. Nothing was charged; try again later.",
+      "error",
+      { useSubmission: true, focusSubmission: true },
+    );
   } finally {
     submitButton.disabled = false;
   }
