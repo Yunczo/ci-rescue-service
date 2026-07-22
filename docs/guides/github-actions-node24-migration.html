@@ -68,7 +68,7 @@
 
     <div class="tool">
       <h2>Start with a local inventory.</h2>
-      <p>Paste sanitized GitHub.com workflow YAML into the browser-only checker. It tracks four verified GitHub-owned Node 24 release floors separately from the latest v7 snapshot and sends pinned SHAs, local or third-party actions, and ambiguous refs to manual review. It neither uploads nor edits the workflow.</p>
+      <p>Paste sanitized GitHub.com workflow YAML into the browser-only checker. It tracks eight GitHub-owned refs across six action families, keeps verified Node 24 floors separate from dated latest-release snapshots, and sends pinned SHAs, local or third-party actions, and ambiguous refs to manual review. It neither uploads nor edits the workflow.</p>
       <a href="../tools/github-actions-node24-checker.html">Check a workflow locally →</a>
     </div>
 
@@ -89,6 +89,8 @@
       <thead><tr><th>Action</th><th>Node 24 floor</th><th>Latest snapshot</th><th>Migration handling</th></tr></thead>
       <tbody>
         <tr><td><code>actions/checkout</code></td><td><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">v5.0.0</a></td><td><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">v7.0.1</a></td><td>Review repository checkout assumptions before any major upgrade.</td></tr>
+        <tr><td><code>actions/cache</code><br><code>actions/cache/restore</code><br><code>actions/cache/save</code></td><td><a href="https://github.com/actions/cache/releases/tag/v5.0.0">v5.0.0</a></td><td><a href="https://github.com/actions/cache/releases/tag/v6.1.0">v6.1.0</a></td><td>Review cache service, runner, path, key, restore-key, and cross-OS assumptions.</td></tr>
+        <tr><td><code>actions/download-artifact</code></td><td><a href="https://github.com/actions/download-artifact/releases/tag/v7.0.0">v7.0.0</a></td><td><a href="https://github.com/actions/download-artifact/releases/tag/v8.0.1">v8.0.1</a></td><td>GitHub.com only; review artifact source, pattern, merge, path, permissions, and firewall requirements.</td></tr>
         <tr><td><code>actions/setup-node</code></td><td><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">v5.0.0</a></td><td><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">v7.0.0</a></td><td>Preserve Node selection, registry, mirror, and cache inputs intentionally.</td></tr>
         <tr><td><code>actions/setup-python</code></td><td><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">v6.0.0</a></td><td><a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">v7.0.0</a></td><td>Review runtime/tool-cache prerequisites and Python selection.</td></tr>
         <tr><td><code>actions/upload-artifact</code></td><td><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">v6.0.0</a></td><td><a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">v7.0.1</a></td><td>GitHub.com only; review artifact naming, path, retention, overwrite, and hidden-file behavior.</td></tr>
@@ -96,7 +98,7 @@
     </table>
 
     <h2>GitHub Enterprise Server needs a separate artifact path.</h2>
-    <p>The official <code>upload-artifact</code> support matrix says v4 and later are not supported on GitHub Enterprise Server. For GHES, it directs Node 24 users to <a href="https://github.com/actions/upload-artifact/releases/tag/v3.2.2"><code>actions/upload-artifact@v3.2.2</code></a>. Do not copy the GitHub.com v6/v7 artifact example into GHES. Verify the support matrix for the installed GHES release and every other action independently.</p>
+    <p>The official <code>upload-artifact</code> support matrix says v4 and later are not supported on GitHub Enterprise Server. For GHES, it directs Node 24 users to <a href="https://github.com/actions/upload-artifact/releases/tag/v3.2.2"><code>actions/upload-artifact@v3.2.2</code></a>. The official <code>download-artifact</code> matrix likewise says v4 and later are not supported on GHES, but currently points to <a href="https://github.com/actions/download-artifact/releases/tag/v3">v3 (Node 16)</a> or <a href="https://github.com/actions/download-artifact/releases/tag/v3-node20">v3-node20 (Node 20)</a>, not a Node 24 line. Do not copy the GitHub.com artifact examples into GHES. Verify the support matrix for the installed GHES release and every other action independently.</p>
 
     <h2>GitHub.com example target, not a universal patch.</h2>
     <pre><code>steps:
@@ -131,14 +133,19 @@
       <li><a href="https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#jobsjob_idstepsuses">GitHub Docs: workflow syntax for <code>steps[*].uses</code></a></li>
       <li><a href="https://docs.github.com/en/actions/how-tos/create-and-publish-actions/manage-custom-actions#using-release-management-for-actions">GitHub Docs: release management for actions</a></li>
       <li><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">Official checkout v5.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/cache/releases/tag/v5.0.0">Official cache v5.0.0 Node 24 release</a></li>
+      <li><a href="https://github.com/actions/download-artifact/releases/tag/v7.0.0">Official download-artifact v7.0.0 Node 24 release</a></li>
       <li><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">Official setup-node v5.0.0 Node 24 release</a></li>
       <li><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">Official setup-python v6.0.0 Node 24 release</a></li>
       <li><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">Official upload-artifact v6.0.0 Node 24 release</a></li>
       <li><a href="https://github.com/actions/checkout/releases/tag/v7.0.1">Official checkout v7.0.1 release</a></li>
+      <li><a href="https://github.com/actions/cache/releases/tag/v6.1.0">Official cache v6.1.0 release</a></li>
+      <li><a href="https://github.com/actions/download-artifact/releases/tag/v8.0.1">Official download-artifact v8.0.1 release</a></li>
       <li><a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">Official setup-node v7.0.0 release</a></li>
       <li><a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">Official setup-python v7.0.0 release</a></li>
       <li><a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">Official upload-artifact v7.0.1 release</a></li>
       <li><a href="https://github.com/actions/upload-artifact#ghes-support">Official upload-artifact GHES support matrix</a></li>
+      <li><a href="https://github.com/actions/download-artifact#ghes-support">Official download-artifact GHES support matrix</a></li>
     </ul>
 
     <div class="cta">

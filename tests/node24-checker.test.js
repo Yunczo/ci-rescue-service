@@ -8,9 +8,27 @@ test("reference snapshot separates Node 24 floors from latest releases", () => {
   assert.equal(REFERENCE_DATE, "2026-07-22");
   assert.deepEqual(KNOWN_ACTIONS, {
     "actions/checkout": { node24Major: 5, node24Release: "v5.0.0", latestMajor: 7, latestRelease: "v7.0.1" },
+    "actions/cache": { node24Major: 5, node24Release: "v5.0.0", latestMajor: 6, latestRelease: "v6.1.0" },
+    "actions/cache/restore": { node24Major: 5, node24Release: "v5.0.0", latestMajor: 6, latestRelease: "v6.1.0" },
+    "actions/cache/save": { node24Major: 5, node24Release: "v5.0.0", latestMajor: 6, latestRelease: "v6.1.0" },
+    "actions/download-artifact": {
+      node24Major: 7,
+      node24Release: "v7.0.0",
+      latestMajor: 8,
+      latestRelease: "v8.0.1",
+      githubDotComOnly: true,
+      ghesNote: "GitHub Enterprise Server does not support download-artifact@v4+; current official guidance points to v3 (Node 16) or v3-node20 (Node 20), not a Node 24 release line.",
+    },
     "actions/setup-node": { node24Major: 5, node24Release: "v5.0.0", latestMajor: 7, latestRelease: "v7.0.0" },
     "actions/setup-python": { node24Major: 6, node24Release: "v6.0.0", latestMajor: 7, latestRelease: "v7.0.0" },
-    "actions/upload-artifact": { node24Major: 6, node24Release: "v6.0.0", latestMajor: 7, latestRelease: "v7.0.1", githubDotComOnly: true },
+    "actions/upload-artifact": {
+      node24Major: 6,
+      node24Release: "v6.0.0",
+      latestMajor: 7,
+      latestRelease: "v7.0.1",
+      githubDotComOnly: true,
+      ghesNote: "GitHub Enterprise Server has a separate official upload-artifact@v3.2.2 Node 24 path.",
+    },
   });
 });
 
@@ -40,11 +58,13 @@ test("flags an older known major without claiming its bundled runtime", () => {
 });
 
 test("recognizes each current official major", () => {
-  const workflow = Object.keys(KNOWN_ACTIONS).map((action) => `- uses: ${action}@v7`).join("\n");
+  const workflow = Object.entries(KNOWN_ACTIONS)
+    .map(([action, { latestMajor }]) => `- uses: ${action}@v${latestMajor}`)
+    .join("\n");
   const result = analyzeWorkflow(workflow);
 
-  assert.equal(result.actionCount, 4);
-  assert.equal(result.node24RecognizedCount, 4);
+  assert.equal(result.actionCount, 8);
+  assert.equal(result.node24RecognizedCount, 8);
   assert.equal(result.warningCount, 0);
   assert.ok(result.findings.every(({ code }) => code === "ACT006"));
 });
@@ -52,15 +72,36 @@ test("recognizes each current official major", () => {
 test("recognizes verified Node 24 floors without forcing the latest major", () => {
   const result = analyzeWorkflow([
     "- uses: actions/checkout@v5",
+    "- uses: actions/cache@v5.0.0",
+    "- uses: actions/cache/restore@v5",
+    "- uses: actions/cache/save@v6",
+    "- uses: actions/download-artifact@v7",
     "- uses: actions/setup-node@v5.0.0",
     "- uses: actions/setup-python@v6",
     "- uses: actions/upload-artifact@v6.0.0",
   ].join("\n"));
 
-  assert.equal(result.node24RecognizedCount, 4);
+  assert.equal(result.node24RecognizedCount, 8);
   assert.equal(result.warningCount, 0);
   assert.match(result.findings[0].summary, /not required solely for the Node 24 migration/i);
-  assert.match(result.findings[3].summary, /GitHub Enterprise Server/i);
+  assert.match(result.findings[4].summary, /not a Node 24 release line/i);
+  assert.match(result.findings[7].summary, /upload-artifact@v3\.2\.2 Node 24 path/i);
+});
+
+test("models cache restore and save sub-actions as first-party refs", () => {
+  const older = analyzeWorkflow([
+    "- uses: actions/cache/restore@v4",
+    "- uses: actions/cache/save@v4",
+  ].join("\n"));
+  assert.deepEqual(older.findings.map(({ code }) => code), ["ACT005", "ACT005"]);
+
+  const current = analyzeWorkflow([
+    "- uses: actions/cache/restore@v5",
+    "- uses: actions/cache/save@v6",
+  ].join("\n"));
+  assert.equal(current.node24RecognizedCount, 2);
+  assert.equal(current.manualReviewCount, 0);
+  assert.ok(current.findings.every(({ code }) => code === "ACT006"));
 });
 
 test("does not bless an unverified same-major patch tag", () => {

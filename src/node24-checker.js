@@ -2,11 +2,31 @@ const MAX_CHARACTERS = 300_000;
 
 export const REFERENCE_DATE = "2026-07-22";
 
+const CACHE_ACTION = Object.freeze({ node24Major: 5, node24Release: "v5.0.0", latestMajor: 6, latestRelease: "v6.1.0" });
+
 export const KNOWN_ACTIONS = Object.freeze({
   "actions/checkout": Object.freeze({ node24Major: 5, node24Release: "v5.0.0", latestMajor: 7, latestRelease: "v7.0.1" }),
+  "actions/cache": CACHE_ACTION,
+  "actions/cache/restore": CACHE_ACTION,
+  "actions/cache/save": CACHE_ACTION,
+  "actions/download-artifact": Object.freeze({
+    node24Major: 7,
+    node24Release: "v7.0.0",
+    latestMajor: 8,
+    latestRelease: "v8.0.1",
+    githubDotComOnly: true,
+    ghesNote: "GitHub Enterprise Server does not support download-artifact@v4+; current official guidance points to v3 (Node 16) or v3-node20 (Node 20), not a Node 24 release line.",
+  }),
   "actions/setup-node": Object.freeze({ node24Major: 5, node24Release: "v5.0.0", latestMajor: 7, latestRelease: "v7.0.0" }),
   "actions/setup-python": Object.freeze({ node24Major: 6, node24Release: "v6.0.0", latestMajor: 7, latestRelease: "v7.0.0" }),
-  "actions/upload-artifact": Object.freeze({ node24Major: 6, node24Release: "v6.0.0", latestMajor: 7, latestRelease: "v7.0.1", githubDotComOnly: true }),
+  "actions/upload-artifact": Object.freeze({
+    node24Major: 6,
+    node24Release: "v6.0.0",
+    latestMajor: 7,
+    latestRelease: "v7.0.1",
+    githubDotComOnly: true,
+    ghesNote: "GitHub Enterprise Server has a separate official upload-artifact@v3.2.2 Node 24 path.",
+  }),
 });
 
 function makeFinding(code, severity, title, summary, line, action = "", ref = "") {
@@ -218,7 +238,7 @@ export function analyzeWorkflow(text) {
         ? `It also matches this checker's latest major snapshot (${known.latestRelease}).`
         : `The latest snapshot is ${known.latestRelease}, but a latest-major upgrade is not required solely for the Node 24 migration.`;
       const platformNote = known.githubDotComOnly
-        ? " This artifact-action recommendation is for GitHub.com; GitHub Enterprise Server has a separate official v3.2.2 Node 24 path."
+        ? ` This recommendation is for GitHub.com. ${known.ghesNote}`
         : "";
       findings.push(makeFinding(
         "ACT006",

@@ -96,7 +96,7 @@
     <p class="lede">Paste a <strong>sanitized GitHub.com</strong> workflow. The checker finds temporary Node 20 opt-outs, self-hosted runner review points, and action refs that need release-note or metadata inspection. It never uploads or rewrites your YAML.</p>
 
     <div class="snapshot">
-      <strong>Reference snapshot: July 22, 2026.</strong> GitHub began making Node 24 the default on June 16, 2026 and plans to remove Node 20 from runners later in fall 2026. The verified Node 24 floors are <code>checkout@v5</code>, <code>setup-node@v5</code>, <code>setup-python@v6</code>, and <code>upload-artifact@v6</code>; latest v7 releases are recorded separately. This tool's artifact guidance is for GitHub.com. GitHub Enterprise Server has a separate official <code>upload-artifact@v3.2.2</code> Node 24 path.
+      <strong>Reference snapshot: July 22, 2026.</strong> GitHub began making Node 24 the default on June 16, 2026 and plans to remove Node 20 from runners later in fall 2026. The six verified action-family floors are <code>checkout@v5</code>, <code>cache@v5</code> (including <code>cache/restore</code> and <code>cache/save</code>), <code>download-artifact@v7</code>, <code>setup-node@v5</code>, <code>setup-python@v6</code>, and <code>upload-artifact@v6</code>; dated latest-release snapshots are recorded separately. Artifact guidance is for GitHub.com. GHES has a separate <code>upload-artifact@v3.2.2</code> Node 24 path, while official <code>download-artifact</code> guidance does not currently offer a Node 24 line.
     </div>
 
     <div class="privacy-proof" aria-label="Privacy properties">
@@ -126,7 +126,7 @@
     <section class="method" aria-labelledby="method-title">
       <h2 id="method-title">What the result can—and cannot—tell you.</h2>
       <div class="method-grid">
-        <article><h3>It can triage refs</h3><p>The tool parses ordinary and flow-style <code>uses:</code> entries, compares four GitHub-owned actions with dated Node 24 floors and latest-release snapshots, and identifies configuration that deserves immediate review.</p></article>
+        <article><h3>It can triage refs</h3><p>The tool parses ordinary and flow-style <code>uses:</code> entries, compares eight GitHub-owned refs across six action families with dated Node 24 floors and latest-release snapshots, and identifies configuration that deserves immediate review.</p></article>
         <article><h3>It cannot prove runtime compatibility</h3><p>A pinned SHA hides its release line from an offline parser, third-party metadata is outside this page, and successful hosted execution depends on the actual runner, inputs, permissions, and services.</p></article>
       </div>
     </section>
@@ -149,6 +149,8 @@
       <ul>
         <li><a href="https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/">GitHub Changelog: Deprecation of Node 20 on Actions runners</a></li>
         <li><a href="https://github.com/actions/checkout/releases/tag/v5.0.0">actions/checkout v5.0.0: Node 24 floor</a> · <a href="https://github.com/actions/checkout/releases/tag/v7.0.1">latest snapshot v7.0.1</a></li>
+        <li><a href="https://github.com/actions/cache/releases/tag/v5.0.0">actions/cache v5.0.0: Node 24 floor</a> · <a href="https://github.com/actions/cache/releases/tag/v6.1.0">latest snapshot v6.1.0</a></li>
+        <li><a href="https://github.com/actions/download-artifact/releases/tag/v7.0.0">actions/download-artifact v7.0.0: Node 24 floor</a> · <a href="https://github.com/actions/download-artifact/releases/tag/v8.0.1">latest snapshot v8.0.1</a> · <a href="https://github.com/actions/download-artifact#ghes-support">GHES support guidance</a></li>
         <li><a href="https://github.com/actions/setup-node/releases/tag/v5.0.0">actions/setup-node v5.0.0: Node 24 floor</a> · <a href="https://github.com/actions/setup-node/releases/tag/v7.0.0">latest snapshot v7.0.0</a></li>
         <li><a href="https://github.com/actions/setup-python/releases/tag/v6.0.0">actions/setup-python v6.0.0: Node 24 floor</a> · <a href="https://github.com/actions/setup-python/releases/tag/v7.0.0">latest snapshot v7.0.0</a></li>
         <li><a href="https://github.com/actions/upload-artifact/releases/tag/v6.0.0">actions/upload-artifact v6.0.0: Node 24 floor</a> · <a href="https://github.com/actions/upload-artifact/releases/tag/v7.0.1">latest snapshot v7.0.1</a></li>

@@ -33,6 +33,8 @@ test("migration guide cites only official GitHub sources and keeps payment behin
 
   assert.match(guide, /github\.blog\/changelog\/2025-09-19-deprecation-of-node-20/);
   assert.match(guide, /github\.com\/actions\/checkout\/releases\/tag\/v7\.0\.1/);
+  assert.match(guide, /github\.com\/actions\/cache\/releases\/tag\/v6\.1\.0/);
+  assert.match(guide, /github\.com\/actions\/download-artifact\/releases\/tag\/v8\.0\.1/);
   assert.match(guide, /github\.com\/actions\/setup-node\/releases\/tag\/v7\.0\.0/);
   assert.match(guide, /github\.com\/actions\/setup-python\/releases\/tag\/v7\.0\.0/);
   assert.match(guide, /github\.com\/actions\/upload-artifact\/releases\/tag\/v7\.0\.1/);
