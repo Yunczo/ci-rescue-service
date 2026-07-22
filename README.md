@@ -84,9 +84,9 @@ These examples contain no client data and are not represented as paid-client res
 - [Fix `upload-artifact` “No files were found” warnings](https://yunczo.github.io/ci-rescue-service/guides/upload-artifact-no-files-found-github-actions.html)
 - [Fix pytest exit code 5 when no tests are collected](https://yunczo.github.io/ci-rescue-service/guides/pytest-exit-code-5-no-tests-github-actions.html)
 
-## Support the free toolkit
+## Support the free tools
 
-If the free toolkit saved you time, optional Bitcoin support is welcome at `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`. Voluntary support is not a service purchase, does not create a delivery obligation or priority, and is separate from CI Rescue intake. See [the support boundary](SUPPORT.md).
+If the free toolkit, Action, browser-only log triage, or troubleshooting guides saved you time, an optional Bitcoin tip is welcome at `1AHjXAgf9DEErm21HVjr59uwSoZSoT9qre`. Tips are optional and never required to use any free resource. They buy no service, diagnosis, response, delivery, priority, refund, or other consideration, and are separate from CI Rescue intake. See [the support boundary](SUPPORT.md).
 
 ## Delivery boundary
 
