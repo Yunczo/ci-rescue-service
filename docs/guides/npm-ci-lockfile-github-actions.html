@@ -89,8 +89,8 @@ npm ci</code></pre>
     <h2>Keep the workflow explicit.</h2>
     <p>GitHub's Node.js workflow guide uses checkout, a declared Node setup step, and <code>npm ci</code>. Using the repository's version file avoids silently testing a different runtime locally and in CI:</p>
     <pre><code>steps:
-  - uses: actions/checkout@v6
-  - uses: actions/setup-node@v4
+  - uses: actions/checkout@v7
+  - uses: actions/setup-node@v7
     with:
       node-version-file: .nvmrc
       cache: npm

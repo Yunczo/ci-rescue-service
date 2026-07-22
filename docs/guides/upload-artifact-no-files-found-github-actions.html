@@ -38,7 +38,7 @@ No artifacts will be uploaded.</code></pre>
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Build the web package
         run: npm ci &amp;&amp; npm run build
